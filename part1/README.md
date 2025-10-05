@@ -20,6 +20,9 @@ Vous retrouverez donc ci-dessous plusieurs diagrammes illustrant les interaction
 
 Ce diagramme représente l'architecture du système dans son ensemble. Il illustre les différentes interactions entre les différentes couches et à quoi elles correspondent.
 
+<img width="217" height="546" alt="Package Diagram drawio" src="https://github.com/user-attachments/assets/02c58b45-8bf2-4588-b610-cad802e439d1" />
+
+
 - **Presentation layer**:  
 Gère l'interface utilisateur et les contrôleurs API
 
@@ -35,6 +38,10 @@ Gère le contrôle et l'accès des informations dans la base de données via des
 
 Ce diagramme détaille les entités principales du domaine, ainsi que leurs relations.  
 Il encapsule les règles métiers qui servent à vérifier si les données sont conformes à une demande.
+
+<img width="778" height="579" alt="Class Diagram1" src="https://github.com/user-attachments/assets/1b93b9b9-571d-4e13-96a1-63b9873d8fca" />
+
+
 
 - **Base Model**:  
 Contient les attributs et les méthodes communes à toutes les classes pour simplifier la lisibilité et la maintenance. Toutes les autres classes en héritent.
@@ -71,11 +78,17 @@ Voici donc quatre diagrammes de séquence avec quatre scénarios différents:
 
 ### Demande de création d'un utilisateur:
 
+<img width="957" height="383" alt="Sequence Diagram_ User Creation drawio" src="https://github.com/user-attachments/assets/4d51534c-183f-4c0d-bdbe-808a1f21e366" />
+
+
 Dans ce diagramme, l'utilisateur demande à créer un nouveau compte. Il va faire une demande à l'API (dans le presentation layer), qui va demander au business logic layer de vérifier si la requête et les données sont valides. Si elles ne le sont pas, le système va renvoyer une erreur.  
 Si la requête et les données sont valides, alors elles sont envoyées au persistance layer qui va inseré un nouvel utilisateur dans la base de données.  
 Quand c'est fait, la base données renvoie l'identifiant (ID) de l'utilisateur, ainsi que l'heure de sa création.
 
 ### Demande de création d'un nouveau logement:
+
+<img width="957" height="383" alt="Sequence Diagram_ Creation of a place drawio" src="https://github.com/user-attachments/assets/bc1659be-d2bb-43b7-97c6-dccd86e936a2" />
+
 
 Dans ce diagramme, l'utilisateur demande à créer un nouveau logement. Il va faire une demande à l'API (dans le presentation layer), qui va demander au business logic layer de vérifier si la requête et les données sont valides. Si elles ne le sont pas, le système va renvoyer une erreur.  
 Si la requête et les données sont valides, alors elles sont envoyées au persistance layer qui va inseré un nouveau logement dans la base de données.  
@@ -83,10 +96,16 @@ Quand c'est fait, la base données renvoie l'identifiant (ID) du logement, ainsi
 
 ### Demande de création d'un avis:
 
+<img width="957" height="383" alt="Sequence Diagram_Creation_of a review drawio" src="https://github.com/user-attachments/assets/17990f24-18f6-440c-9207-ae4200f5e2c2" />
+
+
 Dans ce diagramme, l'utilisateur demande à créer un nouvel avis sur un logement. Il va faire une demande à l'API (dans le presentation layer), qui va demander au business logic layer de vérifier si la requête et les données sont valides. Si elles ne le sont pas, le système va renvoyer une erreur.  
 Si la requête et les données sont valides, alors elles sont envoyées au persistance layer qui va inseré un nouvel avis dans la base de données. Quand c'est fait, elle renvoie l'identifiant (ID) du logement, ainsi que l'heure de sa création.
 
 ### Demande d'une liste de logements basée sur un critère:
+
+<img width="957" height="383" alt="Sequence Diagram_ Request a list of places drawio" src="https://github.com/user-attachments/assets/39c5396d-c5b7-4a23-9548-f26bd751cda7" />
+
 
 Dans ce diagramme, l'utilisateur demande une liste de logements, basée sur un critère. Il va faire une demande à l'API (dans le presentation layer), qui va demander au business logic layer de vérifier si la requête et les données sont valides. Si elles ne le sont pas, le système va renvoyer une erreur.  
 Si la requête et les données sont valides, alors elles sont envoyées au persistance layer qui va chercher une correspondance avec le critère, dans les logements présents dans la base de données. Quand c'est fait, elle renvoie toutes les instances correspondantes, et renvoie une liste d'ID (d'identifiants) de toutes ces instances.

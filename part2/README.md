@@ -4,6 +4,9 @@ Comme vous avez pu le voir dans le diagramme de classe, il existe plusieurs enti
 Nous les avons initialisé dans le dossier "models", dans des fichiers portant leur nom respectif.
 Voici une description complète du rôle de chaque entité, et de leur fonctionnement.
 
+
+
+
 ## BaseModel:
 Cette entité contient tous les attributs et méthodes communes aux autres entités.
 
@@ -25,6 +28,9 @@ Toutes les autres entités héritent de cette classe.
 | `update(data)`      |Met à jour le informations d'un objet                           |data         |None         |
 | `delete(id)`        |Supprime un objet                                               |id           |None         |
 
+
+
+
 ## User:
 Cette entité représente un utilisateur inscrit et enregistré dans l'application.
 
@@ -37,19 +43,19 @@ Si l'utilisateur supprime son compte, les logements qui lui étaient associés d
 
 | Attribut        | Type     | Description                                 |
 |-----------------|----------|---------------------------------------------|
-| `id`            | UUID     | Identifiant unique de l'utilisateur         |
 | `first_name`    | string   | Prénom de l'utilisateur                     |
 | `last_name`     | string   | Nom de famille de l'utilisateur             |
 | `email`         | string   | Adresse email (unique, validée)             |
 | `password_hash` | string   | Mot de passe haché                          |
 | `is_admin`      | boolean  | Rôle (`user` ou `admin`)                    |
-| `created_at`    | datetime | Date de création du compte                  |
-| `updated_at`    | datetime | Date de mise à jour du compte               |
 
 | Méthode             | Description                                                    | Paramètres  |    Retour   |
 |---------------------|----------------------------------------------------------------|-------------|-------------|
 | `add_review()`      |Ajoute un avis dans la liste d'avis de l'utilisateur            |None         |None         |
 | `add_place()`       |Ajoute une location dans la liste de logements de l'utilisateur |None         |None         |
+
+
+
 
 ## Place:
 Cette entité représente les locations mises à disposition sur l'application.
@@ -77,6 +83,9 @@ Si le propriétaire du logement supprime son compte, celui-ci est supprimé éga
 | `add_review()`    | Ajoute un avis à la liste `reviews`.        | `review: Review`       | `None`     |
 | `add_amenity()`   | Ajoute un équipement à la liste `amenities`.| `amenity: Amenity`     | `None`     |
 
+
+
+
 ## Review:
 Cette entité représente les avis laissés sur les logements, pour pouvoir juger de la qulaité du logement.
 
@@ -94,6 +103,9 @@ Si l'utilisateur supprime son compte, son avis reste.
 | `rating`   | int      | Note attribuée au lieu (généralement entre 1–5)  |
 | `owner`    | User     | Auteur de l'avis (instance de `User`)            |
 | `place`    | Place    | Lieu concerné par l'avis (instance de `Place`)   |
+
+
+
 
 ## Amenity:
 Entité représentant les commodités associées à un logement. (piscine, wi-fi...)

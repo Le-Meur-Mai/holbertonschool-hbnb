@@ -7,7 +7,7 @@ Voici une description complète du rôle de chaque entité, et de leur fonctionn
 
 
 
-## BaseModel:
+# BaseModel:
 Cette entité contient tous les attributs et méthodes communes aux autres entités.
 
 ### Relations:
@@ -31,7 +31,7 @@ Toutes les autres entités héritent de cette classe.
 
 
 
-## User:
+# User:
 Cette entité représente un utilisateur inscrit et enregistré dans l'application.
 
 ### Relations:
@@ -54,10 +54,22 @@ Si l'utilisateur supprime son compte, les logements qui lui étaient associés d
 | `add_review()`      |Ajoute un avis dans la liste d'avis de l'utilisateur            |None         |None         |
 | `add_place()`       |Ajoute une location dans la liste de logements de l'utilisateur |None         |None         |
 
+### Exemple d'utilisation:
+
+from app.models.user import User
+
+def test_user_creation():
+    user = User(first_name="John", last_name="Doe", email="john.doe@example.com")
+    assert user.first_name == "John"
+    assert user.last_name == "Doe"
+    assert user.email == "john.doe@example.com"
+    assert user.is_admin is False  # Default value
+    print("User creation test passed!")
+
+test_user_creation()
 
 
-
-## Place:
+# Place:
 Cette entité représente les locations mises à disposition sur l'application.
 
 ### Relations:
@@ -86,7 +98,7 @@ Si le propriétaire du logement supprime son compte, celui-ci est supprimé éga
 
 
 
-## Review:
+# Review:
 Cette entité représente les avis laissés sur les logements, pour pouvoir juger de la qulaité du logement.
 
 ### Relations:
@@ -104,6 +116,28 @@ Si l'utilisateur supprime son compte, son avis reste.
 | `owner`    | User     | Auteur de l'avis (instance de `User`)            |
 | `place`    | Place    | Lieu concerné par l'avis (instance de `Place`)   |
 
+### Exemple  d'utilisation avec place et review:
+
+from app.models.place import Place
+from app.models.user import User
+from app.models.review import Review
+
+def test_place_creation():
+    owner = User(first_name="Alice", last_name="Smith", email="alice.smith@example.com")
+    place = Place(title="Cozy Apartment", description="A nice place to stay", price=100, latitude=37.7749, longitude=-122.4194, owner=owner)
+
+    # Adding a review
+    review = Review(text="Great stay!", rating=5, place=place, user=owner)
+    place.add_review(review)
+
+    assert place.title == "Cozy Apartment"
+    assert place.price == 100
+    assert len(place.reviews) == 1
+    assert place.reviews[0].text == "Great stay!"
+    print("Place creation and relationship test passed!")
+
+test_place_creation()
+
 
 
 
@@ -114,6 +148,19 @@ Entité représentant les commodités associées à un logement. (piscine, wi-fi
 Un logement peut avoir plusieurs commodités.
 Il peut y avoir la même commodité sur plusieurs logements.
 
+### Structure:
+
 | Attribut | Type   | Description                            |
 |----------|--------|----------------------------------------|
 | `name`   | string | Nom de l'équipement ou commodité       |
+
+### Exemple d'utilisation:
+
+from amenity import Amenity
+
+def test_amenity_creation():
+    amenity = Amenity(name="Wi-Fi")
+    assert amenity.name == "Wi-Fi"
+    print("Amenity creation test passed!")
+
+test_amenity_creation()

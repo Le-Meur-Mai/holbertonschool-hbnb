@@ -11,6 +11,12 @@ class HBnBFacade:
 
     def create_user(self, user_data):
         user = User(**user_data)
+        if not user.first_name:
+            raise ValueError
+        if not user.last_name:
+            raise ValueError
+        if not user.email:
+            raise ValueError
         self.user_repo.add(user)
         return user
     

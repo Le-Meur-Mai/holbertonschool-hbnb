@@ -3,12 +3,11 @@ from app.models.basemodel import BaseModel as BaseModel
 class Place(BaseModel):
     def __init__(self, title, description, price, latitude, longitude, owner_id):
         super().__init__()
+        self.__title = None
         self.title = title
         self.description = description
         self.price = price
-        self.__latitude = None
         self.latitude = latitude
-        self.__longitude = None
         self.longitude = longitude
         self.owner_id = owner_id
         self.reviews = []  # List to store related reviews
@@ -22,7 +21,14 @@ class Place(BaseModel):
         """Add an amenity to the place."""
         self.amenities.append(amenity)
 
+    @property
+    def title(self):
+        return self.__title
 
+    @title.setter
+    def title(self, value):
+        self.__title = value
+    
     @property
     def price(self):
         return self._price

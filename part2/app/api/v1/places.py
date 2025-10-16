@@ -90,9 +90,11 @@ class PlaceResource(Resource):
             return {'error': 'Place not found'}, 404
         list_amenities = []
         if len(place.amenities) > 0:
-            for amenity in self.amenities:
-                data_amenity = facade.get_amenity_by_name(amenity.name)
-                list_amenities.append(data_amenity)
+            list_amenities = [{
+                'id': amenity.id,
+                'name': amenity.name
+            }for amenity in place.amenities]
+                
         data_owner = facade.get_user(place.owner_id)
         return { 'id': place.id,
                 'title': place.title,
@@ -119,7 +121,8 @@ class PlaceResource(Resource):
 
         amenity = facade.get_amenity(data_amenity["id"])
         place.amenities.append(amenity)
-        return {'message': 'amenity successfully added'}, 200
+        return {'amenity successfully added': {"id": amenity.id,
+                                               'name': amenity.name}}, 200
 
 
     """Update a place's information"""

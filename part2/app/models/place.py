@@ -27,6 +27,8 @@ class Place(BaseModel):
 
     @title.setter
     def title(self, value):
+        if not value:
+            raise ValueError
         self.__title = value
     
     @property

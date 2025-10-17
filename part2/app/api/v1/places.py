@@ -36,12 +36,27 @@ place_model = api.model('Place', {
 
 @api.route('/')
 class PlaceList(Resource):
+    """Resource for creating and listing places."""
+
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
+        """
+        Register a new place.
 
-        """Register a new place"""
+        This endpoint allows clients to register a new place by providing
+        its title, description, location (latitude, longitude), price,
+        owner ID, and a list of amenity IDs.
+
+        Returns:
+            list: A JSON response containing the created place's details
+            and a 201 status code upon success.
+            If the place already exists (same coordinates),
+                returns a 400 error.
+            If the specified owner does not exist, returns a 404 error.
+            If the input data is invalid, returns a 400 error.
+        """
 
         place_data = api.payload
 
@@ -66,10 +81,15 @@ class PlaceList(Resource):
                 'longitude': new_place.longitude,
                 'owner_id': new_place.owner_id}, 201
 
-    """Retrieve a list of all places"""
-
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
+        """
+        Retrieve a list of all registered places.
+
+        Returns:
+            list: A JSON list of all places, each including their ID, title,
+            latitude, and longitude, along with a 200 status code.
+        """
         places = facade.get_all_places()
         place_list = [{
             'id': place.id,
@@ -81,60 +101,102 @@ class PlaceList(Resource):
         return place_list, 200
 
 
-"""Get place details by ID"""
-
-
 @api.route('/<place_id>')
 class PlaceResource(Resource):
+    """Resource for retrieving, updating, or modifying a specific place."""
+
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
+        """
+        Retrieve detailed information about a specific place.
+
+        Args:
+            place_id (str): The unique identifier of the place.
+
+        Returns:
+            list: A JSON object containing full details of the place,
+            including owner information and amenities,
+                along with a 200 status code.
+            If the place is not found, returns a 404 error.
+        """
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
+
         list_amenities = []
         if len(place.amenities) > 0:
             list_amenities = [{
                 'id': amenity.id,
                 'name': amenity.name
-            }for amenity in place.amenities]
+            } for amenity in place.amenities]
 
         data_owner = facade.get_user(place.owner_id)
-        return {'id': place.id,
-                'title': place.title,
-                'description': place.description,
-                'price': place.price,
-                'latitude': place.latitude,
-                'longitude': place.longitude,
-                'owner': {"id": place.owner_id,
-                          "first_name": data_owner.first_name,
-                          "last_name": data_owner.last_name,
-                          "email": data_owner.email},
-                'amenities': list_amenities}, 200
-
-    """Adding an amenity to a place"""
+        return {
+            'id': place.id,
+            'title': place.title,
+            'description': place.description,
+            'price': place.price,
+            'latitude': place.latitude,
+            'longitude': place.longitude,
+            'owner': {
+                "id": place.owner_id,
+                "first_name": data_owner.first_name,
+                "last_name": data_owner.last_name,
+                "email": data_owner.email
+            },
+            'amenities': list_amenities
+        }, 200
 
     @api.response(404, 'Place not found')
     @api.response(200, 'Amenity added successfuly')
     def post(self, place_id):
+        """
+        Add an amenity to a specific place.
+
+        This endpoint allows adding an existing amenity to a place.
+
+        Args:
+            place_id (str): The unique identifier of the place.
+
+        Returns:
+            list: A JSON object confirming the addition of the amenity
+            with a 200 status code.
+            If the place is not found, returns a 404 error.
+        """
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
 
         data_amenity = api.payload
-
         amenity = facade.get_amenity(data_amenity["id"])
         place.amenities.append(amenity)
-        return {'amenity successfully added': {"id": amenity.id,
-                                               'name': amenity.name}}, 200
-
-    """Update a place's information"""
+        return {
+            'amenity successfully added': {
+                "id": amenity.id,
+                'name': amenity.name
+            }
+        }, 200
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
     def put(self, place_id):
+        """
+        Update an existing place.
+
+        This endpoint allows modifying details of an existing place,
+        such as title, description, location, price, owner, or amenities.
+
+        Args:
+            place_id (str): The unique identifier of the place to update.
+
+        Returns:
+            list: A success message with a 200 status code upon success.
+            If the place is not found, returns a 404 error.
+            If the input data is invalid, returns a 400 error.
+        """
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
@@ -147,5 +209,5 @@ class PlaceResource(Resource):
             facade.update_place(place_id, data_place)
         except ValueError:
             return {'error': 'Invalid input data'}, 400
-        
+
         return {"message": "Place updated successfully"}, 200

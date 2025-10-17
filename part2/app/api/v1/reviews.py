@@ -86,18 +86,11 @@ class ReviewResource(Resource):
     def delete(self, review_id):
         """Delete a review"""
         # Placeholder for the logic to delete a review
-        review = facade.delete_review(review_id)
+        review = facade.get_review(review_id)
         if not review:
-            return {'error': 'User not found'}, 404
-        # Copy the payload in json format, to retrieve the updated data and update it
-        update_data = api.payload
-        facade.update_review(review_id, update_data)
-        return {'id' : review.id,-
-                'text' : review.text,
-                'rating' : review.rating,
-                'user_id' : review.user_id,
-                'place_id' : review.place_id
-            }
+            return {'error': 'Review not found'}, 404
+        review = facade.delete_review(review_id)
+        return {"message": "Review deleted successfully"}
 
 @api.route('/places/<place_id>/reviews')
 class PlaceReviewList(Resource):

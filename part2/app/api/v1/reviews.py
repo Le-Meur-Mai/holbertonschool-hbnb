@@ -33,7 +33,7 @@ class ReviewList(Resource):
     def get(self):
         """Retrieve a list of all reviews"""
         # Placeholder for logic to return a list of all reviews
-        review = facade.get_all_review()
+        review = facade.get_all_reviews()
         review_list = [{
             'id' : review.id,
             'text' : review.text,

@@ -84,6 +84,10 @@ class HBnBFacade:
         # Logic will be implemented in later tasks
         pass
 
+    
+    """REVIEW"""
+
+
     def create_review(self, review_data):
         # Placeholder for logic to create a review, including validation for user_id, place_id, and rating
         review = Review(**review_data)
@@ -92,7 +96,7 @@ class HBnBFacade:
 
     def get_review(self, review_id):
         # Placeholder for logic to retrieve a review by ID
-        return self.review_repo.get_by_id('review_id', review_id)
+        return self.review_repo.get(review_id)
 
     def get_all_reviews(self):
         # Placeholder for logic to retrieve all reviews

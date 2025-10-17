@@ -2,33 +2,7 @@
 
 Voici une petite représentation visuelle de la structure globale du projet:
 
-hbnb/
-├── app/
-│   ├── __init __.py
-│   ├── api/
-│   │   ├── __init __.py
-│   │   ├── v1/
-│   │       ├── __init __.py
-│   │       ├── users<space>.py
-│   │       ├── places<space>.py
-│   │       ├── reviews<space>.py
-│   │       ├── amenities<space>.py
-│   ├── models/
-│   │   ├── __init __.py
-│   │   ├── user<space>.py
-│   │   ├── place<space>.py
-│   │   ├── review<space>.py
-│   │   ├── amenity<space>.py
-│   ├── services/
-│   │   ├── __init __.py
-│   │   ├── facade<space>.py
-│   ├── persistence/
-│       ├── __init __.py
-│       ├── repository<space>.py
-├── run<space>.py
-├── config<space>.py
-├── requirements.txt
-├── README<space>.md
+
 
 ## Description:
 

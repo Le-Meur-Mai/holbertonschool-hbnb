@@ -114,7 +114,9 @@ class PlaceReviewList(Resource):
         """Get all reviews for a specific place"""
         place = facade.get_place(place_id)
         review_list = [{
-                'id' : review.id
+                'id' : review.id,
+                'text' : review.text,
+                'rating' : review.rating
             } for review in place.reviews]
-        
+
         return review_list, 200

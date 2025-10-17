@@ -46,7 +46,7 @@ class ReviewList(Resource):
                 'rating': review.rating,
                 'user_id': review.user_id,
                 'place_id': review.place_id
-            }
+            }, 201
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):

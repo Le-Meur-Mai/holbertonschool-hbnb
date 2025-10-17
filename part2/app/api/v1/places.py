@@ -18,16 +18,20 @@ user_model = api.model('PlaceUser', {
 
 # Define the place model for input validation and documentation
 place_model = api.model('Place', {
-    'title': fields.String(required=True, description='Title of the place'),
+    'title': fields.String(required=True,
+                           description='Title of the place'),
     'description': fields.String(description='Description of the place'),
-    'price': fields.Float(required=True, description='Price per night'),
-    'latitude': fields.Float(required=True, description='Latitude of the place'),
-    'longitude': fields.Float(required=True, description='Longitude of the place'),
-    'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
+    'price': fields.Float(required=True,
+                          description='Price per night'),
+    'latitude': fields.Float(required=True,
+                             description='Latitude of the place'),
+    'longitude': fields.Float(required=True,
+                              description='Longitude of the place'),
+    'owner_id': fields.String(required=True,
+                              description='ID of the owner'),
+    'amenities': fields.List(fields.String, required=True,
+                             description="List of amenities ID's")
 })
-
-
 
 
 @api.route('/')
@@ -41,7 +45,9 @@ class PlaceList(Resource):
 
         place_data = api.payload
 
-        existing_place = facade.get_place_by_localisation(place_data['latitude'], place_data['longitude'])
+        existing_place = facade.get_place_by_localisation(
+            place_data['latitude'],
+            place_data['longitude'])
         if existing_place is True:
             return {'error': 'This place already exists'}, 400
         existing_user = facade.get_user(place_data['owner_id'])
@@ -51,34 +57,32 @@ class PlaceList(Resource):
             new_place = facade.create_place(place_data)
         except ValueError:
             return {'error': 'Invalid input data'}, 400
-        
-        return { 'id': new_place.id,
+
+        return {'id': new_place.id,
                 'title': new_place.title,
                 'description': new_place.description,
                 'price': new_place.price,
                 'latitude': new_place.latitude,
                 'longitude': new_place.longitude,
                 'owner_id': new_place.owner_id}, 201
-        
+
     """Retrieve a list of all places"""
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
         places = facade.get_all_places()
         place_list = [{
-            'id' : place.id,
-            'title' : place.title,
-            'latitude' : place.latitude,
-            'longitude' : place.longitude,
+            'id': place.id,
+            'title': place.title,
+            'latitude': place.latitude,
+            'longitude': place.longitude,
         } for place in places]
 
         return place_list, 200
 
 
-
-    
-    
 """Get place details by ID"""
+
 
 @api.route('/<place_id>')
 class PlaceResource(Resource):
@@ -94,9 +98,9 @@ class PlaceResource(Resource):
                 'id': amenity.id,
                 'name': amenity.name
             }for amenity in place.amenities]
-                
+
         data_owner = facade.get_user(place.owner_id)
-        return { 'id': place.id,
+        return {'id': place.id,
                 'title': place.title,
                 'description': place.description,
                 'price': place.price,
@@ -107,7 +111,7 @@ class PlaceResource(Resource):
                           "last_name": data_owner.last_name,
                           "email": data_owner.email},
                 'amenities': list_amenities}, 200
-        
+
     """Adding an amenity to a place"""
 
     @api.response(404, 'Place not found')
@@ -116,14 +120,13 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-        
+
         data_amenity = api.payload
 
         amenity = facade.get_amenity(data_amenity["id"])
         place.amenities.append(amenity)
         return {'amenity successfully added': {"id": amenity.id,
                                                'name': amenity.name}}, 200
-
 
     """Update a place's information"""
 

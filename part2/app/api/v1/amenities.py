@@ -8,6 +8,7 @@ amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity')
 })
 
+
 @api.route('/')
 class AmenityList(Resource):
     @api.expect(amenity_model)
@@ -23,7 +24,6 @@ class AmenityList(Resource):
         new_amenity = facade.create_amenity(amenity_data)
         return {'id': new_amenity.id, 'name': new_amenity.name}, 201
 
-
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
         """Retrieve a list of all amenities"""
@@ -34,6 +34,7 @@ class AmenityList(Resource):
         } for amenity in amenities]
 
         return amenity_list, 200
+
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
@@ -55,7 +56,6 @@ class AmenityResource(Resource):
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {'error': 'Amenity    not found'}, 404
-        # Copy the payload in json format, to retrieve the updated data and update it
         update_data = api.payload
         try:
             facade.update_amenity(amenity_id, update_data)

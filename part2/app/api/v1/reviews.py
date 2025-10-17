@@ -5,14 +5,14 @@ api = Namespace('reviews', description='Review operations')
 
 # Define the review model for input validation and documentation
 review_model = api.model('Review', {
-    'text': fields.String(
-        required=True, description='Text of the review'),
-    'rating': fields.Integer(
-        required=True, description='Rating of the place (1-5)'),
-    'user_id': fields.String(
-        required=True, description='ID of the user'),
-    'place_id': fields.String
-    (required=True, description='ID of the place')
+    'text': fields.String(required=True,
+                          description='Text of the review'),
+    'rating': fields.Integer(required=True,
+                             description='Rating of the place (1-5)'),
+    'user_id': fields.String(required=True,
+                             description='ID of the user'),
+    'place_id': fields.String(required=True,
+                              description='ID of the place')
 })
 
 
@@ -46,7 +46,7 @@ class ReviewList(Resource):
                 'rating': review.rating,
                 'user_id': review.user_id,
                 'place_id': review.place_id
-            }, 201
+            }
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
@@ -92,20 +92,15 @@ class ReviewResource(Resource):
 
         if not review:
             return {'error': 'User not found'}, 404
-        # Copy the payload in json format,
-        # to retrieve the updated data and update it.
+
         update_data = api.payload
-        try:
-            facade.update_review(review_id, update_data)
-        except ValueError:
-            return {'error': 'Invalid rating value'}, 400
-        return {
-                'id': review.id,
+        facade.update_review(review_id, update_data)
+        return {'id': review.id,
                 'text': review.text,
                 'rating': review.rating,
                 'user_id': review.user_id,
                 'place_id': review.place_id
-            }
+                }
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')

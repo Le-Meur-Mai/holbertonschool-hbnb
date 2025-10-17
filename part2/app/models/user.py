@@ -1,6 +1,7 @@
 from app.models.basemodel import BaseModel as BaseModel
 from email_validator import validate_email, EmailNotValidError
 
+
 class User(BaseModel):
     def __init__(self, first_name, last_name, email):
         super().__init__()
@@ -42,7 +43,7 @@ class User(BaseModel):
     def email(self, value):
         if not value:
             raise ValueError
-        
+
         try:
             valid = validate_email(value)
             self.__email = valid.email
@@ -58,4 +59,3 @@ class User(BaseModel):
     def add_place(self, place):
         '''Add place to the user'''
         self.places.append(place)
-

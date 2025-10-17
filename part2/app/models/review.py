@@ -50,7 +50,8 @@ class Review(BaseModel):
         """Set the rating of the review with validation.
 
         Args:
-            value (int): The rating value to assign (must be an integer between 1 and 5).
+            value (int): The rating value to assign
+                (must be an integer between 1 and 5).
 
         Raises:
             ValueError: If the value is not an integer or not in the range 1-5.

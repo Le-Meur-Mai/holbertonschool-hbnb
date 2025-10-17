@@ -16,7 +16,6 @@ review_model = api.model('Review', {
 })
 
 
-
 @api.route('/')
 class ReviewList(Resource):
     """Resource for creating and listing reviews."""
@@ -46,11 +45,9 @@ class ReviewList(Resource):
         if not existing_user:
             return {'error': 'This user doesn\'t exist'}, 404
 
-
         existing_place = facade.get_place(review_data['place_id'])
         if not existing_place:
             return {'error': 'This place doesn\'t exist'}, 404
-
 
         try:
             review = facade.create_review(review_data)
@@ -86,7 +83,6 @@ class ReviewList(Resource):
         } for review in reviews]
 
         return review_list, 200
-
 
 
 @api.route('/<review_id>')
@@ -188,7 +184,6 @@ class ReviewResource(Resource):
 
         review = facade.delete_review(review_id)
         return {"message": "Review deleted successfully"}
-
 
 
 @api.route('/places/<place_id>/reviews')

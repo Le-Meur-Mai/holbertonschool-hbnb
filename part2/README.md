@@ -1,3 +1,29 @@
+# Structure Of The Project
+
+Voici une petite représentation visuelle de la structure globale du projet:
+
+<img width="307" height="698" alt="Structure" src="https://github.com/user-attachments/assets/1c292731-5ba0-4a3f-ba08-53b741a04aae" />
+
+
+## Description:
+
+| Fichier / Dossier     | Description                                                                                                                                                      |
+|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| app/                  | Contient le code essentiel pour le fonctionnement de l'application.                                                                                             |
+| api/                  | Contient tous les fichiers contenant les points de terminaison ou endpoints de chaque entité (users, places ...), organisé par version.                         |
+| models/               | Contient les classes de la logique métier.                                                                                                                      |
+| services/             | Contient la façade dans laquelle est gérer toutes les interactions entre les différentes couches.                                                               |
+| persistence/          | Contient le fichier repository où est implémenté le "in-memory repository", qui va être remplacé plus tard par une vraie base de données utilisant SQL Alchemy. |
+| run<space>.py                | C'est le fichier qui sert à lancer l'application Flask. <br>On peut lancer l'application avec la commande suivante: python3 run<space>.py                                                                                                             |
+| config<space>.py             | Configure les variables d'environnement et les paramètres de l'application.                                                                                     |
+| requirements.txt      | C'est un fichier qui sert aux utilisateurs à bien configurer leur environnement pour que l'application puisse se lancer et fonctionner. Il liste les packages essentiels python.<br>Voici la commande pour installer ces packages: pip install -r requirements.txt                                                                                   |
+| README<space>.md             | Vous êtes dans ce fichier qui sert à documenter et avoir un apperçu globale du projet.                                                                          |
+| __init __.py           | Ils sont présents un peu partout, cela indique à Python que de traiter les répertoires dans lesquels ils se trouvent comme des paquets importables              |
+| repository<space>.py         | Contient toutes les méthodes pour intéragir avec une base de données qui ici est pour le moment "InMemoryRepository"                                            |
+| facade<space>.py             | Gère la communication entre les différentes couches: le Presentation Layer, La Business Logic Layer et le Persistence Layer.                                   |
+
+
+
 # Core Models:
 
 Comme vous avez pu le voir dans le diagramme de classe, il existe plusieurs entités essentielles au bon fonctionnement de l'applicattion, qui sont au coeur de la logique métier.

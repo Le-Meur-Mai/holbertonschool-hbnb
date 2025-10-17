@@ -137,5 +137,12 @@ class PlaceResource(Resource):
             return {'error': 'Place not found'}, 404
 
         data_place = api.payload
-        facade.update_place(place_id, data_place)
+        existing_user = facade.get_user(data_place['owner_id'])
+        if not existing_user:
+            return {'error': 'This user doesn\'t exist'}, 404
+        try:
+            facade.update_place(place_id, data_place)
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
+        
         return {"message": "Place updated successfully"}, 200

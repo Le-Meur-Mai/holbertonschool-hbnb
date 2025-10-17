@@ -56,11 +56,13 @@ class UserResource(Resource):
 
     def put(self, user_id):
         '''Update the user profile'''
-         # verify if the user exist
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
         # Copy the payload in json format, to retrieve the updated data and update it
         update_data = api.payload
-        facade.update_user(user_id, update_data)
+        try:
+            facade.update_user(user_id, update_data)
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
         return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200

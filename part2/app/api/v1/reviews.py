@@ -84,10 +84,23 @@ class ReviewResource(Resource):
         """Update a review's information"""
         review = facade.get_review(review_id)
         if not review:
-            return {'error': 'User not found'}, 404
+            return {'error': 'Review not found'}, 404
         # Copy the payload in json format, to retrieve the updated data and update it
         update_data = api.payload
-        facade.update_review(review_id, update_data)
+
+        existing_user = facade.get_user(update_data['user_id'])
+        if not existing_user:
+            return {'error': 'This user doesn\'t exist'}, 404
+        
+        existing_place = facade.get_place(update_data['place_id'])
+        if not existing_place:
+            return {'error': 'This place doesn\'t exist'}, 404
+        
+        try:
+            facade.update_review(review_id, update_data)
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
+        
         return {'id' : review.id,
                 'text' : review.text,
                 'rating' : review.rating,
@@ -103,6 +116,7 @@ class ReviewResource(Resource):
         review = facade.get_review(review_id)
         if not review:
             return {'error': 'Review not found'}, 404
+            
         review = facade.delete_review(review_id)
         return {"message": "Review deleted successfully"}
 
@@ -118,5 +132,4 @@ class PlaceReviewList(Resource):
                 'text' : review.text,
                 'rating' : review.rating
             } for review in place.reviews]
-
         return review_list, 200

@@ -57,5 +57,8 @@ class AmenityResource(Resource):
             return {'error': 'Amenity    not found'}, 404
         # Copy the payload in json format, to retrieve the updated data and update it
         update_data = api.payload
-        facade.update_amenity(amenity_id, update_data)
+        try:
+            facade.update_amenity(amenity_id, update_data)
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
         return {"message": "Amenity updated successfully"}

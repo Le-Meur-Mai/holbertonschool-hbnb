@@ -83,11 +83,6 @@ class ReviewList(Resource):
             'rating': review.rating,
             'user_id': review.user_id,
             'place_id': review.place_id
-            'id': review.id,
-            'text': review.text,
-            'rating': review.rating,
-            'user_id': review.user_id,
-            'place_id': review.place_id
         } for review in reviews]
 
         return review_list, 200
@@ -222,9 +217,6 @@ class PlaceReviewList(Resource):
             return {'error': 'Place not found'}, 404
 
         review_list = [{
-                'id': review.id,
-                'text': review.text,
-                'rating': review.rating
                 'id': review.id,
                 'text': review.text,
                 'rating': review.rating

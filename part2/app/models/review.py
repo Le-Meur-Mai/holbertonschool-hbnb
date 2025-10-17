@@ -42,10 +42,19 @@ class Review(BaseModel):
 
     @property
     def rating(self):
+        """Get the rating of the review."""
         return self.__rating
 
     @rating.setter
     def rating(self, value):
+        """Set the rating of the review with validation.
+
+        Args:
+            value (int): The rating value to assign (must be an integer between 1 and 5).
+
+        Raises:
+            ValueError: If the value is not an integer or not in the range 1-5.
+        """
         if not isinstance(value, int):
             raise ValueError("Rating must be an integer")
         if value < 1 or value > 5:

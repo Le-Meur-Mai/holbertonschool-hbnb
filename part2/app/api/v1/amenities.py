@@ -58,4 +58,4 @@ class AmenityResource(Resource):
         # Copy the payload in json format, to retrieve the updated data and update it
         update_data = api.payload
         facade.update_amenity(amenity_id, update_data)
-        return {'id': amenity.id, 'name': amenity.name}, 200
+        return {"message": "Amenity updated successfully"}

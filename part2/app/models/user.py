@@ -46,7 +46,7 @@ class User(BaseModel):
 
         try:
             valid = validate_email(value)
-            self.__email = valid.email
+            self.__email = valid.normalized
         except EmailNotValidError:
             raise ValueError("Invalid email address format")
 

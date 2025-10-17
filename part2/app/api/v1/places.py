@@ -55,7 +55,7 @@ class PlaceList(Resource):
             return {'error': 'This user doesn\'t exist'}, 404
         try:
             new_place = facade.create_place(place_data)
-        except ValueError:
+        except (ValueError, TypeError):
             return {'error': 'Invalid input data'}, 400
 
         return {'id': new_place.id,

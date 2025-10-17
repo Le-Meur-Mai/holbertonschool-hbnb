@@ -33,7 +33,7 @@ class ReviewList(Resource):
         except ValueError:
             return {'error': 'Invalid input data'}, 400
 
-        # existing_place.reviews.append(review)
+        existing_place.reviews.append(review)
 
         return {
                 'id' : review.id,
@@ -112,12 +112,11 @@ class PlaceReviewList(Resource):
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all reviews for a specific place"""
-        reviews = facade.get_reviews_by_place(place_id)
+        place = facade.get_place(place_id)
         review_list = [{
                 'id' : review.id,
                 'text' : review.text,
                 'rating' : review.rating
-            } for review in reviews]
-        # print (review_list)
+            } for review in place.reviews]
 
         return review_list, 200

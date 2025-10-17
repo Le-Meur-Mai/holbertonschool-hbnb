@@ -51,7 +51,6 @@ class ReviewList(Resource):
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
         """Retrieve a list of all reviews"""
-        # Placeholder for logic to return a list of all reviews
         reviews = facade.get_all_reviews()
         review_list = [{
             'id': review.id,
@@ -70,7 +69,6 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     def get(self, review_id):
         """Get review details by ID"""
-        # Placeholder for the logic to retrieve a review by ID
         review = facade.get_review(review_id)
         if not review:
             return {'error': 'Review not found'}, 404
@@ -107,12 +105,7 @@ class ReviewResource(Resource):
         except ValueError:
             return {'error': 'Invalid input data'}, 400
         
-        return {'id' : review.id,
-                'text' : review.text,
-                'rating' : review.rating,
-                'user_id' : review.user_id,
-                'place_id' : review.place_id
-            }
+        return {"message": "Review updated successfully"}, 200
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')

@@ -19,7 +19,21 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         review_data = api.payload
-        review = facade.create_review(review_data)
+
+        existing_user = facade.get_user(review_data['user_id'])
+        if not existing_user:
+            return {'error': 'This user doesn\'t exist'}, 404
+        
+        existing_place = facade.get_place(review_data['place_id'])
+        if not existing_place:
+            return {'error': 'This place doesn\'t exist'}, 404
+        
+        try:
+            review = facade.create_review(review_data)
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
+
+        # existing_place.reviews.append(review)
 
         return {
                 'id' : review.id,
@@ -33,14 +47,14 @@ class ReviewList(Resource):
     def get(self):
         """Retrieve a list of all reviews"""
         # Placeholder for logic to return a list of all reviews
-        review = facade.get_all_reviews()
+        reviews = facade.get_all_reviews()
         review_list = [{
             'id' : review.id,
             'text' : review.text,
             'rating' : review.rating,
             'user_id' : review.user_id,
             'place_id' : review.place_id
-        } for review in review]
+        } for review in reviews]
 
         return review_list, 200
 
@@ -98,5 +112,12 @@ class PlaceReviewList(Resource):
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all reviews for a specific place"""
-        # Placeholder for logic to return a list of reviews for a place
-        pass
+        reviews = facade.get_reviews_by_place(place_id)
+        review_list = [{
+                'id' : review.id,
+                'text' : review.text,
+                'rating' : review.rating
+            } for review in reviews]
+        # print (review_list)
+
+        return review_list, 200

@@ -1,4 +1,5 @@
 from app.models.basemodel import BaseModel as BaseModel
+from email_validator import validate_email, EmailNotValidError
 
 class User(BaseModel):
     def __init__(self, first_name, last_name, email):
@@ -41,6 +42,13 @@ class User(BaseModel):
     def email(self, value):
         if not value:
             raise ValueError
+        
+        try:
+            valid = validate_email(value)
+            self.__email = valid.email
+        except EmailNotValidError:
+            raise ValueError("Invalid email address format")
+
         self.__email = value
 
     def add_review(self, review):

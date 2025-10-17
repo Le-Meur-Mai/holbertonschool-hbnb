@@ -39,3 +39,15 @@ class Review(BaseModel):
         if not value:
             raise ValueError
         self.__text = value
+
+    @property
+    def rating(self):
+        return self.__rating
+
+    @rating.setter
+    def rating(self, value):
+        if not isinstance(value, int):
+            raise ValueError("Rating must be an integer")
+        if value < 1 or value > 5:
+            raise ValueError("Rating must be between 1 and 5")
+        self.__rating = value

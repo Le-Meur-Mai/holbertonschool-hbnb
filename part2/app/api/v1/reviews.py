@@ -5,15 +5,16 @@ api = Namespace('reviews', description='Review operations')
 
 # Define the review model for input validation and documentation
 review_model = api.model('Review', {
-    'text': fields.String(required=True,
-                          description='Text of the review'),
-    'rating': fields.Integer(required=True,
-                             description='Rating of the place (1-5)'),
-    'user_id': fields.String(required=True,
-                             description='ID of the user'),
-    'place_id': fields.String(required=True,
-                              description='ID of the place')
+    'text': fields.String(
+        required=True, description='Text of the review'),
+    'rating': fields.Integer(
+        required=True, description='Rating of the place (1-5)'),
+    'user_id': fields.String(
+        required=True, description='ID of the user'),
+    'place_id': fields.String
+    (required=True, description='ID of the place')
 })
+
 
 
 @api.route('/')
@@ -45,9 +46,11 @@ class ReviewList(Resource):
         if not existing_user:
             return {'error': 'This user doesn\'t exist'}, 404
 
+
         existing_place = facade.get_place(review_data['place_id'])
         if not existing_place:
             return {'error': 'This place doesn\'t exist'}, 404
+
 
         try:
             review = facade.create_review(review_data)
@@ -80,9 +83,15 @@ class ReviewList(Resource):
             'rating': review.rating,
             'user_id': review.user_id,
             'place_id': review.place_id
+            'id': review.id,
+            'text': review.text,
+            'rating': review.rating,
+            'user_id': review.user_id,
+            'place_id': review.place_id
         } for review in reviews]
 
         return review_list, 200
+
 
 
 @api.route('/<review_id>')
@@ -140,6 +149,7 @@ class ReviewResource(Resource):
             404 - If the review, user, or place is not found.
         """
         review = facade.get_review(review_id)
+
         if not review:
             return {'error': 'Review not found'}, 404
         update_data = api.payload
@@ -185,6 +195,7 @@ class ReviewResource(Resource):
         return {"message": "Review deleted successfully"}
 
 
+
 @api.route('/places/<place_id>/reviews')
 class PlaceReviewList(Resource):
     """Resource for retrieving all reviews associated with a specific place."""
@@ -211,6 +222,9 @@ class PlaceReviewList(Resource):
             return {'error': 'Place not found'}, 404
 
         review_list = [{
+                'id': review.id,
+                'text': review.text,
+                'rating': review.rating
                 'id': review.id,
                 'text': review.text,
                 'rating': review.rating

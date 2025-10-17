@@ -2,6 +2,7 @@
 
 Voici une petite représentation visuelle de la structure globale du projet:
 
+<img width="307" height="698" alt="Structure" src="https://github.com/user-attachments/assets/1c292731-5ba0-4a3f-ba08-53b741a04aae" />
 
 
 ## Description:

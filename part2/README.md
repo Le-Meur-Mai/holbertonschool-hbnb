@@ -15,6 +15,7 @@
   - [test_amenity.py](#test_amenitypy)  
   - [test_review.py](#test_reviewpy)
 
+<br>
 
 # Structure du projet
 
@@ -40,9 +41,9 @@ Voici une petite représentation visuelle de la structure globale du projet:
 | repository<space>.py         | Contient toutes les méthodes pour intéragir avec une base de données qui ici est pour le moment "InMemoryRepository"                                            |
 | facade<space>.py             | Gère la communication entre les différentes couches: le Presentation Layer, La Business Logic Layer et le Persistence Layer.                                   |
 
+<br>
+<br>
 
-#
-#
 # Core Models
 
 Comme vous avez pu le voir dans le diagramme de classe, il existe plusieurs entités essentielles au bon fonctionnement de l'applicattion, qui sont au coeur de la logique métier.
@@ -50,7 +51,8 @@ Nous les avons initialisé dans le dossier "models", dans des fichiers portant l
 Voici une description complète du rôle de chaque entité, et de leur fonctionnement.
 
 
-#
+<br>
+
 ## BaseModel:
 Cette entité contient tous les attributs et méthodes communes aux autres entités.
 
@@ -74,7 +76,8 @@ Toutes les autres entités héritent de cette classe.
 
 
 
-#
+<br>
+
 ## User
 Cette entité représente un utilisateur inscrit et enregistré dans l'application.
 
@@ -112,7 +115,8 @@ def test_user_creation():
 
 test_user_creation()
 
-#
+<br>
+
 ## Place
 Cette entité représente les locations mises à disposition sur l'application.
 
@@ -140,8 +144,8 @@ Si le propriétaire du logement supprime son compte, celui-ci est supprimé éga
 | `add_amenity()`   | Ajoute un équipement à la liste `amenities`.| `amenity: Amenity`     | `None`     |
 
 
+<br>
 
-#
 ## Review
 Cette entité représente les avis laissés sur les logements, pour pouvoir juger de la qulaité du logement.
 
@@ -184,7 +188,8 @@ test_place_creation()
 
 
 
-#
+<br>
+
 ## Amenity
 Entité représentant les commodités associées à un logement. (piscine, wi-fi...)
 
@@ -208,14 +213,17 @@ def test_amenity_creation():
     print("Amenity creation test passed!")
 
 test_amenity_creation()
-#
-#
+
+<br>
+<br>
+
 # Fichiers unittest
 
 Voici ci-dessous tous les fichiers effectuant des tests unitaires dans le but de vérifier le bon fonctionnement de l'application.
 Il vérifie notamment que les endpoints de chaque entitée fonction et que la gestion des erreurs est correcte.
 
-#
+<br>
+
 ## test_user.py
 
 Commande de test: python3 test_user.py
@@ -232,7 +240,8 @@ Commande de test: python3 test_user.py
 | `test_update_invalid_first_name`  | Mettre à jour les informations d'un utilisateur avec un prénom vide, test directement dans le code.       | Création d'un nouvel utilisateur: `{first_name="Naruto", last_name="Uzumaki", email="naruto.uzumaki@mail.com"}` puis envoie de nouvelles informations: `{"first_name": "", "last_name": "Muto", "email": "yugi.muto@mail.com"}` | Création d'un utilisateur et échec de la mise à jour de ses informations avec un message d'erreur.                                       | Création d'un utilisateur et échec de la mise à jour de ses informations avec un message d'erreur.                                       |
 | `test_update_invalid_last_name`   | Mettre à jour les informations d'un utilisateur avec un nom de famille vide, test directement dans le code. | Création d'un nouvel utilisateur: `{first_name="Gojo", last_name="Satoru", email="gojo.satoru@mail.com"}` puis envoie de nouvelles informations: `{"first_name": "Gojo", "last_name": "", "email": "gojo.satoru@mail.com"}` | Création d'un utilisateur et échec de la mise à jour de ses informations avec un message d'erreur.                                       | Création d'un utilisateur et échec de la mise à jour de ses informations avec un message d'erreur.                                       |
 
-#
+<br>
+
 ## test_place.py
 
 Commande de test: python3 test_place.py
@@ -254,8 +263,8 @@ Commande de test: python3 test_place.py
 | `test_valid_update_place`         | Mise à jour d’un lieu avec des données valides                              | `{description: "A nice place to stay"}`                                                    | Mise à jour réussie, attribut modifié                                            | Mise à jour réussie, attribut `description` mis à jour                           |
 | `test_invalid_update_place`       | Mise à jour d’un lieu avec un titre vide                                    | `{title: ""}`                                                                              | Exception `ValueError` échec de la mise à jour                                                          | Exception `ValueError` échec de la mise à jour                                                          |
 
+<br>
 
-#
 ## test_review.py
 
 Commande de test: python3 test_review.py
@@ -278,7 +287,8 @@ Commande de test: python3 test_review.py
 | `test_get_reviews_by_place`            | Récupération de tous les avis pour un lieu valide                           | Requête GET vers `/reviews/places/{place.id}/reviews`                                                           | Code de réponse `200` et affiche tous les avis reliés au lieu                                 | Code de réponse `200` et affiche tous les avis reliés au lieu                                 |
 | `test_get_reviews_by_place_place_not_found` | Récupération des avis pour un lieu inexistant                          | Requête GET vers `/reviews/places/fake-id/reviews`                                                              | Code de réponse `404` le lieu n'a pas été trouvé                                 | Code de réponse `404` le lieu n'a pas été trouvé                                 |
 
-#
+<br>
+
 ## test_amenity.py
 
 Commande de test: python3 test_amenity.py

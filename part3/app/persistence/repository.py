@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-from app import db  # Assuming you have set up SQLAlchemy in your Flask app
-from app.models import User, Place, Review, Amenity  # Import your models
 
 
 class Repository(ABC):
@@ -73,32 +71,43 @@ class Repository(ABC):
         pass
 
 
-class SQLAlchemyRepository(Repository):
-    def __init__(self, model):
-        self.model = model
+class InMemoryRepository(Repository):
+    """In-memory implementation of the Repository interface.
+
+    Stores objects in a dictionary keyed by their `id` attribute.
+    """
+
+    def __init__(self):
+        """Initialize the in-memory storage."""
+        self._storage = {}
 
     def add(self, obj):
-        db.session.add(obj)
-        db.session.commit()
+        """Add an object to the repository."""
+        self._storage[obj.id] = obj
 
     def get(self, obj_id):
-        return self.model.query.get(obj_id)
+        """Retrieve an object by its ID."""
+        return self._storage.get(obj_id)
 
     def get_all(self):
-        return self.model.query.all()
+        """Retrieve all stored objects."""
+        return list(self._storage.values())
 
     def update(self, obj_id, data):
+        """Update an object with the given data if it exists."""
         obj = self.get(obj_id)
         if obj:
-            for key, value in data.items():
-                setattr(obj, key, value)
-            db.session.commit()
+            obj.update(data)
 
     def delete(self, obj_id):
-        obj = self.get(obj_id)
-        if obj:
-            db.session.delete(obj)
-            db.session.commit()
+        """Remove an object from the repository by its ID."""
+        if obj_id in self._storage:
+            del self._storage[obj_id]
 
     def get_by_attribute(self, attr_name, attr_value):
-        return self.model.query.filter(getattr(self.model, attr_name) == attr_value).first()
+        """Retrieve the first object with a matching attribute value."""
+        return next(
+            (obj for obj in self._storage.values()
+             if getattr(obj, attr_name, None) == attr_value),
+            None
+        )

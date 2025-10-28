@@ -134,10 +134,10 @@ class UserResource(Resource):
                 "error": "Unauthorized action."
                 }, 403
         for key in update_data:
-            if key == 'email' or key == 'password':
+            if key == 'email' or key == 'password' or key == 'id':
                 if update_data[key] != getattr(user, key):
                     return {
-                        'error': 'You cannot modify email or password.'
+                        'error': 'You cannot modify email or password or id.'
                         }, 400
 
         try:

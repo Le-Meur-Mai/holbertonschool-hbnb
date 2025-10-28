@@ -105,6 +105,12 @@ class AmenityResource(Resource):
         if not amenity:
             return {'error': 'Amenity    not found'}, 404
         update_data = api.payload
+        for key in update_data:
+            if key == 'id':
+                if update_data[key] != getattr(amenity, key):
+                    return {
+                        'error': 'You cannot modify id.'
+                        }, 400
         try:
             facade.update_amenity(amenity_id, update_data)
         except ValueError:

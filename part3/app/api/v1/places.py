@@ -67,12 +67,8 @@ class PlaceList(Resource):
             place_data['longitude'])
         if existing_place is True:
             return {'error': 'This place already exists'}, 400
-        existing_user = facade.get_user(place_data['owner_id'])
-        if not existing_user:
-            return {'error': 'This user doesn\'t exist'}, 404
         current_user = get_jwt_identity()
-        if current_user != place_data['owner_id']:
-            return {'error': 'Unauthorized actions'}, 403
+        place_data['owner_id'] = current_user
         try:
             new_place = facade.create_place(place_data)
         except (ValueError, TypeError):

@@ -215,7 +215,7 @@ class PlaceResource(Resource):
                 if data_place[key] != getattr(place, key):
                     return {
                         'error': 'You cannot modify owner id or the place id.'
-                        }, 400
+                        }, 403
         try:
             facade.update_place(place_id, data_place)
         except ValueError:

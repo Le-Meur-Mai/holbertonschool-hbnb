@@ -72,7 +72,7 @@ class PlaceList(Resource):
             return {'error': 'This user doesn\'t exist'}, 404
         current_user = get_jwt_identity()
         if current_user != place_data['owner_id']:
-            return {'error': 'The owner\'s id is not yours'},404
+            return {'error': 'Unauthorized actions'}, 403
         try:
             new_place = facade.create_place(place_data)
         except (ValueError, TypeError):
@@ -187,6 +187,7 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, place_id):
         """
         Update an existing place.
@@ -206,10 +207,19 @@ class PlaceResource(Resource):
         if not place:
             return {'error': 'Place not found'}, 404
 
+        current_user = get_jwt_identity()
         data_place = api.payload
-        existing_user = facade.get_user(data_place['owner_id'])
+        existing_user = facade.get_user(current_user)
         if not existing_user:
             return {'error': 'This user doesn\'t exist'}, 404
+        if current_user != place.owner_id:
+            return {'error': 'Unauthorized action'}, 403
+        for key in data_place:
+            if key == 'owner_id' or key == 'id':
+                if data_place[key] != getattr(place, key):
+                    return {
+                        'error': 'You cannot modify owner id or the place id.'
+                        }, 400
         try:
             facade.update_place(place_id, data_place)
         except ValueError:

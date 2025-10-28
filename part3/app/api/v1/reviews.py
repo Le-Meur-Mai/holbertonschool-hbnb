@@ -48,6 +48,7 @@ class ReviewList(Resource):
             return {'error': 'This place doesn\'t exist'}, 404
   
         current_user = get_jwt_identity()
+        review_data['user_id'] = current_user
 
         if current_user == existing_place.owner_id:
             return {"message": "You cannot review your own place."}, 400

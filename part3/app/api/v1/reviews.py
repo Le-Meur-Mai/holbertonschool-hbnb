@@ -43,17 +43,11 @@ class ReviewList(Resource):
         """
         review_data = api.payload
 
-        existing_user = facade.get_user(review_data['user_id'])
-        if not existing_user:
-            return {'error': 'This user doesn\'t exist'}, 404
-
         existing_place = facade.get_place(review_data['place_id'])
         if not existing_place:
             return {'error': 'This place doesn\'t exist'}, 404
   
         current_user = get_jwt_identity()
-        if current_user != review_data['user_id']:
-            return {'error': 'Unauthorized action'}, 403
 
         if current_user == existing_place.owner_id:
             return {"message": "You cannot review your own place."}, 400
@@ -63,6 +57,8 @@ class ReviewList(Resource):
                 return {
                     "message": "You have already reviewed this place."
                     }, 400
+
+        review_data['user_id'] = current_user
 
         try:
             review = facade.create_review(review_data)
@@ -202,10 +198,10 @@ class ReviewResource(Resource):
 
         current_user = get_jwt_identity()
         if current_user != review.user_id:
-            return {'message': 'This review is not yours'}, 400
+            return {"error": "Unauthorized action."}, 403
 
         review = facade.delete_review(review_id)
-        return {"message": "Review deleted successfully"}
+        return {"message": "Review deleted successfully"}, 200
 
 
 @api.route('/places/<place_id>/reviews')

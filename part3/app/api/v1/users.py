@@ -135,9 +135,10 @@ class UserResource(Resource):
                 }, 403
         for key in update_data:
             if key == 'email' or key == 'password' or key == 'id':
+            if key == 'email' or key == 'password' or key == 'id':
                 if update_data[key] != getattr(user, key):
                     return {
-                        'error': 'You cannot modify email or password or id.'
+                        'error': 'You cannot modify email or password.'
                         }, 400
 
         try:

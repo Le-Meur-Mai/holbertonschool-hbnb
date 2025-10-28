@@ -59,6 +59,8 @@ class ReviewList(Resource):
                     "message": "You have already reviewed this place."
                     }, 400
 
+        review_data['user_id'] = current_user
+
         try:
             review = facade.create_review(review_data)
         except ValueError:
@@ -197,10 +199,10 @@ class ReviewResource(Resource):
 
         current_user = get_jwt_identity()
         if current_user != review.user_id:
-            return {'message': 'This review is not yours'}, 400
+            return {"error": "Unauthorized action."}, 403
 
         review = facade.delete_review(review_id)
-        return {"message": "Review deleted successfully"}
+        return {"message": "Review deleted successfully"}, 200
 
 
 @api.route('/places/<place_id>/reviews')

@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 
 api = Namespace('users', description='User operations')
@@ -149,5 +149,30 @@ class UserResource(Resource):
             'id': user.id,
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'email': user.email
+            'email': user.email,
+            'is_admin': user.is_admin
         }, 200
+
+@api.route('/admin/')
+class AdminUserCreate(Resource):
+    @jwt_required()
+    def post(self):
+        additionnal_claim = get_jwt()
+        if not additionnal_claim["is_admin"]:
+            return {'error': 'Admin privileges required'}, 403
+
+        user_data = api.payload
+        email = user_data.get('email')
+
+        # Check if email is already in use
+        if facade.get_user_by_email(email):
+            return {'error': 'Email already registered'}, 400
+
+        # Logic to create a new user
+        try:
+            new_user = facade.create_user(user_data)
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
+
+        return {'id': new_user.id,
+                'Success': 'User created successfully !'}, 201

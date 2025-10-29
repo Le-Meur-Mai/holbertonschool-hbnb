@@ -28,7 +28,7 @@ class User(BaseModel):
         self.__email = None
         self.email = email
         self.hash_password(password)
-        self.is_admin = False
+        self.is_admin = True
         self.reviews = []
         self.places = []
 

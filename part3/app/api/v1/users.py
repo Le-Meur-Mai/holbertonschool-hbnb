@@ -162,7 +162,7 @@ class AdminUserCreate(Resource):
             return {'error': 'Admin privileges required'}, 403
 
         user_data = api.payload
-        email = user_data.get('email')
+        email = getattr(user_data, 'email', None)
 
         # Check if email is already in use
         if facade.get_user_by_email(email):
@@ -176,3 +176,35 @@ class AdminUserCreate(Resource):
 
         return {'id': new_user.id,
                 'Success': 'User created successfully !'}, 201
+
+
+@api.route('/admin/<user_id>')
+class AdminUserResource(Resource):
+    @jwt_required()
+    def put(self, user_id):
+        # If 'is_admin' is part of the identity payload
+        additionnal_claim = get_jwt()
+        if not additionnal_claim["is_admin"]:
+            return {'error': 'Admin privileges required'}, 403
+
+        update_data = api.payload
+        email = getattr(update_data, 'email', None)
+        user = facade.get_user(user_id)
+
+        if email:
+            # Check if email is already in use
+            existing_user = facade.get_user_by_email(email)
+            if existing_user and existing_user.id != user_id:
+                return {'error': 'Email is already in use'}, 400
+        try:
+            facade.update_user(user_id, update_data)
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
+
+        return {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'is_admin': user.is_admin
+        }, 200

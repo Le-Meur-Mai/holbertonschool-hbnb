@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 api = Namespace('places', description='Place operations')
 
@@ -210,6 +210,34 @@ class PlaceResource(Resource):
             return {'error': 'This user doesn\'t exist'}, 404
         if current_user != place.owner_id:
             return {'error': 'Unauthorized action'}, 403
+        for key in data_place:
+            if key == 'owner_id' or key == 'id':
+                if data_place[key] != getattr(place, key):
+                    return {
+                        'error': 'You cannot modify owner id or the place id.'
+                        }, 403
+        try:
+            facade.update_place(place_id, data_place)
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
+
+        return {"message": "Place updated successfully"}, 200
+
+@api.route('/admin/<place_id>')
+class AdminPlaceModify(Resource):
+    @jwt_required()
+    def put(self, place_id):
+        current_user = get_jwt_identity()
+        additionnal_claim = get_jwt()
+
+        # Set is_admin default to False if not exists
+        is_admin = additionnal_claim["is_admin"]
+
+        place = facade.get_place(place_id)
+        if not is_admin and place.owner_id != current_user:
+            return {'error': 'Unauthorized action'}, 403
+
+        data_place = api.payload
         for key in data_place:
             if key == 'owner_id' or key == 'id':
                 if data_place[key] != getattr(place, key):

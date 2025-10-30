@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 api = Namespace('amenities', description='Amenity operations')
 
@@ -105,6 +106,9 @@ class AmenityResource(Resource):
         if not amenity:
             return {'error': 'Amenity    not found'}, 404
         update_data = api.payload
+        existing_amenity = facade.get_amenity_by_name(update_data['name'])
+        if existing_amenity:
+            return {'error': 'This amenity already exist'}, 400
         for key in update_data:
             if key == 'id':
                 if update_data[key] != getattr(amenity, key):
@@ -117,3 +121,48 @@ class AmenityResource(Resource):
             return {'error': 'Invalid input data'}, 400
 
         return {"message": "Amenity updated successfully"}
+    
+    @api.route('/admin/')
+    class AdminAmenityCreate(Resource):
+        @jwt_required()
+        def post(self):
+            additionnal_claim = get_jwt()
+            if not additionnal_claim["is_admin"]:
+                return {'error': 'Admin privileges required'}, 403
+
+            amenity_data = api.payload
+            existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
+            if existing_amenity:
+                return {'error': 'This amenity already exist'}, 400
+            new_amenity = facade.create_amenity(amenity_data)
+
+            return {'id': new_amenity.id, 'name': new_amenity.name}, 201
+        
+    @api.route('/admin/<amenity_id>')
+    class AdminAmenityModify(Resource):
+        @jwt_required()
+        def put(self, amenity_id):
+            additionnal_claim = get_jwt()
+            if not additionnal_claim["is_admin"]:
+                return {'error': 'Admin privileges required'}, 403
+
+            amenity = facade.get_amenity(amenity_id)
+
+            if not amenity:
+                return {'error': 'Amenity not found'}, 404
+            update_data = api.payload
+            existing_amenity = facade.get_amenity_by_name(update_data['name'])
+            if existing_amenity:
+                return {'error': 'This amenity already exist'}, 400
+            for key in update_data:
+                if key == 'id':
+                    if update_data[key] != getattr(amenity, key):
+                        return {
+                            'error': 'You cannot modify id.'
+                            }, 400
+            try:
+                facade.update_amenity(amenity_id, update_data)
+            except ValueError:
+                return {'error': 'Invalid input data'}, 400
+
+            return {"message": "Amenity updated successfully"}

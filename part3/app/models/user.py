@@ -60,6 +60,8 @@ class User(BaseModel):
         Raises:
             ValueError: If the email is empty or has invalid format.
         """
+        if len(value) > 120:
+            raise ValueError("Email adress too long")
         try:
             valid = validate_email(value)
             email = valid.normalized
@@ -78,7 +80,7 @@ class User(BaseModel):
         Raises:
             ValueError: If the first name is empty or None.
         """
-        if not value or type(value) != str:
+        if not value or type(value) != str or len(value) > 50:
             raise ValueError
         return value
 
@@ -93,7 +95,7 @@ class User(BaseModel):
         Raises:
             ValueError: If the last name is empty or None.
         """
-        if not value or type(value) != str:
+        if not value or type(value) != str or len(value) > 50:
             raise ValueError
         return value
 

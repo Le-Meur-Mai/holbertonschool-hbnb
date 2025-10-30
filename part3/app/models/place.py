@@ -56,7 +56,7 @@ class Place(BaseModel):
         return value
 
     @validates("price")
-    def price(self, key, value):
+    def verify_price(self, key, value):
         """Set the price of the place.
 
         Args:
@@ -90,7 +90,7 @@ class Place(BaseModel):
         return value
 
     @validates("longitude")
-    def longitude(self, value):
+    def verify_longitude(self, key, value):
         """Set the longitude coordinate.
 
         Args:

@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from flask import request
 
 
 api = Namespace('users', description='User operations')
@@ -187,15 +188,22 @@ class AdminUserResource(Resource):
         if not additionnal_claim["is_admin"]:
             return {'error': 'Admin privileges required'}, 403
 
-        update_data = api.payload
-        email = getattr(update_data, 'email', None)
+        update_data = request.json
+        email = update_data.get('email')
+        password = update_data.get('password')
         user = facade.get_user(user_id)
+
+        if user == None:
+            return {'error': 'User not found'}, 404
 
         if email:
             # Check if email is already in use
             existing_user = facade.get_user_by_email(email)
             if existing_user and existing_user.id != user_id:
                 return {'error': 'Email is already in use'}, 400
+        if password:
+            user.hash_password(password)
+            update_data.pop('password')
         try:
             facade.update_user(user_id, update_data)
         except ValueError:

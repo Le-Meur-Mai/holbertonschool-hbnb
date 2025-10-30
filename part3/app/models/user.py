@@ -19,8 +19,6 @@ class User(BaseModel):
         reviews (list): List of Review objects created by the user.
         places (list): List of Place objects owned by the user.
     """
-
-class User(BaseModel):
     __tablename__ = 'users'
 
     first_name = db.Column(db.String(50), nullable=False)

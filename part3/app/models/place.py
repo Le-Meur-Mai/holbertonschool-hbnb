@@ -23,7 +23,7 @@ class Place(BaseModel):
 
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(250))
-    price = db.Column(db.Float, nullable=False, unique=True)
+    price = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     owner_id = db.Column(db.String(128), nullable=False)
@@ -56,7 +56,7 @@ class Place(BaseModel):
         return value
 
     @validates("price")
-    def price(self, key, value):
+    def verify_price(self, key, value):
         """Set the price of the place.
 
         Args:
@@ -70,7 +70,7 @@ class Place(BaseModel):
             raise TypeError("Price enter is not of type float")
         elif value < 0:
             raise ValueError("Price should be positive")
-        self._price = value
+        return value
 
     @validates("latitude")
     def verify_latitude(self, key, value):
@@ -90,7 +90,7 @@ class Place(BaseModel):
         return value
 
     @validates("longitude")
-    def longitude(self, value):
+    def verify_longitude(self, key, value):
         """Set the longitude coordinate.
 
         Args:

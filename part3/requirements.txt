@@ -4,4 +4,4 @@ email-validator
 flask-bcrypt
 flask-jwt-extended
 sqlalchemy
-flask-sqlalchemypip
+flask-sqlalchemy

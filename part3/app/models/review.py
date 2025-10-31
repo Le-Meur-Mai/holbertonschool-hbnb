@@ -29,7 +29,7 @@ class Review(BaseModel):
         self.place_id = place_id
 
     @validates("text")
-    def verify_text(self, value):
+    def verify_text(self, key, value):
         """Verify the text of the review.
 
         Args:
@@ -43,7 +43,7 @@ class Review(BaseModel):
         return value
 
     @validates("rating")
-    def verify_rating(self, value):
+    def verify_rating(self, key, value):
         """Set the rating of the review with validation.
 
         Args:

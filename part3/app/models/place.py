@@ -1,5 +1,7 @@
 from app.models.basemodel import BaseModel
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import validates
+from sqlalchemy.orm import relationship
 from app import db
 
 
@@ -26,10 +28,11 @@ class Place(BaseModel):
     price = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
-    owner_id = db.Column(db.String(128), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    reviews = relationship('Review', backref='place', lazy=True)
 
     def __init__(self, title, description, price, latitude, longitude,
-                 owner_id):
+                 user):
         """Initialize a new Place instance with validation."""
         super().__init__()
         self.title = title
@@ -37,8 +40,7 @@ class Place(BaseModel):
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner_id = owner_id
-        self.reviews = []  # List to store related reviews
+        self.user = user
         self.amenities = []  # List to store related amenities
 
     @validates("title")
@@ -105,14 +107,6 @@ class Place(BaseModel):
         elif value > 180 or value < -180:
             raise ValueError("Longitude must be between 180 and -180")
         return value
-
-    def add_review(self, review):
-        """Add a review to the place.
-
-        Args:
-            review: A Review object to associate with this place.
-        """
-        self.reviews.append(review)
 
     def add_amenity(self, amenity):
         """Add an amenity to the place.

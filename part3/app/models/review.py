@@ -1,4 +1,5 @@
 from app.models.basemodel import BaseModel as BaseModel
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import validates
 from app import db
 
@@ -20,13 +21,15 @@ class Review(BaseModel):
     """
     text = db.Column(db.String(500))
     rating = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
 
-    def __init__(self, text, rating, place_id, user_id):
+    def __init__(self, text, rating, place, user):
         super().__init__()
         self.text = text
         self.rating = rating
-        self.user_id = user_id
-        self.place_id = place_id
+        self.user = user
+        self.place = place
 
     @validates("text")
     def verify_text(self, key, value):

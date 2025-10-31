@@ -46,34 +46,35 @@ class ReviewList(Resource):
         existing_place = facade.get_place(review_data['place_id'])
         if not existing_place:
             return {'error': 'This place doesn\'t exist'}, 404
-  
+        
         current_user = get_jwt_identity()
-        review_data['user_id'] = current_user
+        user = facade.get_user(current_user)
+  
+        review_data['user'] = user
 
-        if current_user == existing_place.owner_id:
+        if current_user == existing_place.user.id:
             return {"message": "You cannot review your own place."}, 400
 
         for existing_review in existing_place.reviews:
-            if current_user == existing_review.user_id:
+            if current_user == existing_review.user.id:
                 return {
                     "message": "You have already reviewed this place."
                     }, 400
-
-        review_data['user_id'] = current_user
-
+        review_data['place'] = existing_place
+        review_data.pop('place_id')
         try:
             review = facade.create_review(review_data)
         except ValueError:
             return {'error': 'Invalid input data'}, 400
 
-        existing_place.reviews.append(review)
+
 
         return {
             'id': review.id,
             'text': review.text,
             'rating': review.rating,
-            'user_id': review.user_id,
-            'place_id': review.place_id
+            'user_id': review.user.id,
+            'place_id': review.place.id
         }, 201
 
     @api.response(200, 'List of reviews retrieved successfully')
@@ -90,8 +91,8 @@ class ReviewList(Resource):
             'id': review.id,
             'text': review.text,
             'rating': review.rating,
-            'user_id': review.user_id,
-            'place_id': review.place_id
+            'user_id': review.user.id,
+            'place_id': review.place.id
         } for review in reviews]
 
         return review_list, 200
@@ -126,8 +127,8 @@ class ReviewResource(Resource):
             'id': review.id,
             'text': review.text,
             'rating': review.rating,
-            'user_id': review.user_id,
-            'place_id': review.place_id
+            'user_id': review.user.id,
+            'place_id': review.place.id
         }, 200
 
     @api.expect(review_model)
@@ -160,11 +161,14 @@ class ReviewResource(Resource):
 
         for key in update_data:
             if key == 'place_id' or key == 'user_id' or key == 'id':
+                    return {'error': 'You cannot modify and enter ids.'}, 403
+        for key in update_data:
+            if key == 'place' or key == 'user':
                 if update_data[key] != getattr(review, key):
-                    return {'error': 'You cannot modify ids.'}, 403
+                    return {'error: You cannot modify the objects link to the review.'}, 403
 
         current_user = get_jwt_identity()
-        if current_user != review.user_id:
+        if current_user != review.user.id:
             return {"error": "Unauthorized action."}, 403
 
         try:

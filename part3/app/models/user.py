@@ -1,5 +1,7 @@
 from app.models.basemodel import BaseModel as BaseModel
 from email_validator import validate_email, EmailNotValidError
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 from app import bcrypt, db
 import uuid
 from sqlalchemy.orm import validates
@@ -26,6 +28,8 @@ class User(BaseModel):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    reviews = relationship('Review', backref='user', lazy=True)
+    places = relationship('Place', backref='user', lazy=True)
 
     def __init__(self, first_name, last_name, email, password):
         """Initialize a new User instance with validation."""
@@ -35,8 +39,6 @@ class User(BaseModel):
         self.email = email
         self.hash_password(password)
         self.is_admin = False
-        self.reviews = []
-        self.places = []
 
 
     def hash_password(self, password):
@@ -96,19 +98,3 @@ class User(BaseModel):
         if not value or type(value) != str or len(value) > 50:
             raise ValueError
         return value
-
-    def add_review(self, review):
-        """Add a review to the user.
-
-        Args:
-            review: A Review object to associate with this user.
-        """
-        self.reviews.append(review)
-
-    def add_place(self, place):
-        """Add a place to the user.
-
-        Args:
-            place: A Place object to associate with this user.
-        """
-        self.places.append(place)

@@ -68,7 +68,8 @@ class PlaceList(Resource):
         if existing_place is True:
             return {'error': 'This place already exists'}, 400
         current_user = get_jwt_identity()
-        place_data['owner_id'] = current_user
+        user = facade.get_user(current_user)
+        place_data['user'] = user
         try:
             new_place = facade.create_place(place_data)
         except (ValueError, TypeError):
@@ -80,7 +81,7 @@ class PlaceList(Resource):
                 'price': new_place.price,
                 'latitude': new_place.latitude,
                 'longitude': new_place.longitude,
-                'owner_id': new_place.owner_id}, 201
+                'owner_id': new_place.user.id}, 201
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
@@ -132,7 +133,6 @@ class PlaceResource(Resource):
                 'name': amenity.name
             } for amenity in place.amenities]
 
-        data_owner = facade.get_user(place.owner_id)
         return {
             'id': place.id,
             'title': place.title,
@@ -141,10 +141,10 @@ class PlaceResource(Resource):
             'latitude': place.latitude,
             'longitude': place.longitude,
             'owner': {
-                "id": place.owner_id,
-                "first_name": data_owner.first_name,
-                "last_name": data_owner.last_name,
-                "email": data_owner.email
+                "id": place.user.id,
+                "first_name": place.user.first_name,
+                "last_name": place.user.last_name,
+                "email": place.user.email
             },
             'amenities': list_amenities
         }, 200
@@ -205,16 +205,12 @@ class PlaceResource(Resource):
 
         current_user = get_jwt_identity()
         data_place = api.payload
-        existing_user = facade.get_user(current_user)
-        if not existing_user:
-            return {'error': 'This user doesn\'t exist'}, 404
-        if current_user != place.owner_id:
+        if current_user != place.user.id:
             return {'error': 'Unauthorized action'}, 403
         for key in data_place:
             if key == 'owner_id' or key == 'id':
-                if data_place[key] != getattr(place, key):
                     return {
-                        'error': 'You cannot modify owner id or the place id.'
+                        'error': 'You cannot modify/enter the owner id or the place id.'
                         }, 403
         try:
             facade.update_place(place_id, data_place)
@@ -234,16 +230,18 @@ class AdminPlaceModify(Resource):
         is_admin = additionnal_claim["is_admin"]
 
         place = facade.get_place(place_id)
-        if not is_admin and place.owner_id != current_user:
+        if not place:
+            return {'error': 'place not found'}, 404
+        if not is_admin and place.user.id != current_user:
             return {'error': 'Unauthorized action'}, 403
 
         data_place = api.payload
         for key in data_place:
-            if key == 'owner_id' or key == 'id':
-                if data_place[key] != getattr(place, key):
+            if key == 'owner_id' or key == 'id' or key == 'user':
                     return {
-                        'error': 'You cannot modify owner id or the place id.'
+                        'error': 'You cannot modify/enter the owner or the place id.'
                         }, 403
+        
         try:
             facade.update_place(place_id, data_place)
         except ValueError:

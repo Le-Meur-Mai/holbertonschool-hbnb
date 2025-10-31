@@ -5,6 +5,8 @@ from app.models.place import Place
 from app.models.review import Review
 from app.services.repositories.user_repository import UserRepository
 from app.services.repositories.place_repository import PlaceRepository
+from app.services.repositories.amenity_repository import AmenityRepository
+
 
 
 class HBnBFacade:
@@ -19,7 +21,7 @@ class HBnBFacade:
         self.user_repo = UserRepository()
         self.place_repo = PlaceRepository()
         self.review_repo = SQLAlchemyRepository(Review)
-        self.amenity_repo = SQLAlchemyRepository(Amenity)
+        self.amenity_repo = AmenityRepository()
 
     """USER"""
 

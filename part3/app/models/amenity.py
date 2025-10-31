@@ -1,3 +1,4 @@
+from app import db
 from app.models.basemodel import BaseModel as BaseModel
 
 
@@ -10,6 +11,8 @@ class Amenity(BaseModel):
     Attributes:
         name (str): The name of the amenity (e.g., "Wi-Fi", "Pool", "Parking").
     """
+    __tablename__ = "amenities"
+    name = db.Column(db.String(50), nullable=False)
 
     def __init__(self, name):
         """Initialize a new Amenity instance.
@@ -20,25 +23,14 @@ class Amenity(BaseModel):
         Raises:
             ValueError: If the name is empty or None.
         """
+
+
         super().__init__()
-        self.__name = None
         self.name = name
 
-    @property
-    def name(self):
-        """str: Get the amenity's name."""
-        return self.__name
-
-    @name.setter
-    def name(self, value):
-        """Set the amenity's name.
-
-        Args:
-            value (str): The new name of the amenity.
-
-        Raises:
-            ValueError: If the name is empty or None.
-        """
-        if not value:
-            raise ValueError
-        self.__name = value
+    def to_dict(self):
+        """Return a serializable dict version."""
+        return {
+            "id": self.id,
+            "name": self.name,
+        }

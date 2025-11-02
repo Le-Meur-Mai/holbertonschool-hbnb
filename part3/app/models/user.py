@@ -29,7 +29,7 @@ class User(BaseModel):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     reviews = relationship('Review', backref='user', lazy=True)
-    places = relationship('Place', backref='user', lazy=True)
+    places = relationship('Place', backref='user', lazy=True, cascade=('all, delete'))
 
     def __init__(self, first_name, last_name, email, password):
         """Initialize a new User instance with validation."""

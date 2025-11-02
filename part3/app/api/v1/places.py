@@ -188,6 +188,10 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
+        
+        current_user = get_jwt_identity()
+        if current_user != place.user.id:
+            return {'error': 'Unauthorized action'}, 403
 
         data_amenity = api.payload
         list_new_amenities = []

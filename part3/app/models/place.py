@@ -29,10 +29,10 @@ class Place(BaseModel):
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    reviews = relationship('Review', backref='place', lazy=True)
+    reviews = relationship('Review', backref='place', lazy=True, cascade=('all, delete'))
 
     def __init__(self, title, description, price, latitude, longitude,
-                 user):
+                 user, amenities=None):
         """Initialize a new Place instance with validation."""
         super().__init__()
         self.title = title
@@ -41,7 +41,8 @@ class Place(BaseModel):
         self.latitude = latitude
         self.longitude = longitude
         self.user = user
-        self.amenities = []  # List to store related amenities
+        if amenities:
+            self.amenities = amenities
 
     @validates("title")
     def verify_title(self, key, value):
@@ -107,11 +108,3 @@ class Place(BaseModel):
         elif value > 180 or value < -180:
             raise ValueError("Longitude must be between 180 and -180")
         return value
-
-    def add_amenity(self, amenity):
-        """Add an amenity to the place.
-
-        Args:
-            amenity: An Amenity object to associate with this place.
-        """
-        self.amenities.append(amenity)

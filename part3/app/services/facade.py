@@ -6,6 +6,7 @@ from app.models.review import Review
 from app.services.repositories.user_repository import UserRepository
 from app.services.repositories.place_repository import PlaceRepository
 from app.services.repositories.amenity_repository import AmenityRepository
+from app.services.repositories.review_repository import ReviewRepository
 
 
 class HBnBFacade:
@@ -19,8 +20,8 @@ class HBnBFacade:
     def __init__(self):
         self.user_repo = UserRepository()
         self.place_repo = PlaceRepository()
-        self.review_repo = SQLAlchemyRepository()
-        self.amenity_repo = SQLAlchemyRepository()
+        self.review_repo = ReviewRepository()
+        self.amenity_repo = AmenityRepository()
 
     """USER"""
 
@@ -68,7 +69,7 @@ class HBnBFacade:
 
     def get_amenity_by_name(self, name):
         """Retrieve an amenity by its name."""
-        return self.amenity_repo.get_by_attribute('name', name)
+        return self.amenity_repo.get_amenity_by_name(name)
 
     def get_all_amenities(self):
         """Retrieve all amenities."""

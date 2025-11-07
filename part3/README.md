@@ -9,6 +9,8 @@
   - [Review](#review)  
   - [Amenity](#amenity)
 
+- [Diagramme de la base de données](#Diagramme-Entité-Relation)  
+
 - [Fichiers unittest](#fichier-unittest)  
   - [test_user.py](#test_userpy)  
   - [test_place.py](#test_placepy)  
@@ -38,7 +40,7 @@ Voici une petite représentation visuelle de la structure globale du projet:
 | requirements.txt      | C'est un fichier qui sert aux utilisateurs à bien configurer leur environnement pour que l'application puisse se lancer et fonctionner. Il liste les packages essentiels python.<br>Voici la commande pour installer ces packages: pip install -r requirements.txt                                                                                   |
 | README<space>.md             | Vous êtes dans ce fichier qui sert à documenter et avoir un apperçu globale du projet.                                                                          |
 | __init __.py           | Ils sont présents un peu partout, cela indique à Python que de traiter les répertoires dans lesquels ils se trouvent comme des paquets importables              |
-| repository<space>.py         | Contient toutes les méthodes pour intéragir avec une base de données qui ici est pour le moment "InMemoryRepository"                                            |
+| repository<space>.py         | Contient toutes les méthodes pour intéragir avec une base de données.                                            |
 | facade<space>.py             | Gère la communication entre les différentes couches: le Presentation Layer, La Business Logic Layer et le Persistence Layer.                                   |
 
 <br>
@@ -172,9 +174,9 @@ from app.models.review import Review
 
 def test_place_creation():
     owner = User(first_name="Alice", last_name="Smith", email="alice.smith@example.<space>com")
-    place = Place(title="Cozy Apartment", description="A nice place to stay", price=100, latitude=37.7749, longitude=-122.4194, owner=owner)
+    place = Place(title="Cozy Apartment", description="A nice place to stay", price=100, latitude=37.7749, longitude=-122.4194)
     # Adding a review
-    review = Review(text="Great stay!", rating=5, place=place, user=owner)
+    review = Review(text="Great stay!", rating=5, place=place)
     place.add_review(review)
     assert place.title == "Cozy Apartment"
     assert place.price == 100
@@ -214,6 +216,29 @@ test_amenity_creation()
 
 <br>
 <br>
+
+# Diagramme Entité-Relation
+
+Voici ci-dessous le diagramme d'entité-relations représente la structure de notre base de données avec ses entités,
+leurs attributs ainsi que leurs relations.
+
+### Entité:
+C'est un objet stocké sous forme de données, ici nous avons par exemple les utilisateurs (User) et les logements (Place).
+
+### Attribut:
+Ce sont les propriétées d'une entité comme son identifiant (id) (User.id), ou son prénom (name) (User.name).
+
+### Relation:
+C'est un lien entre deux entités pour définir leurs comportements (many to many, one to many). Par exemple un lieu peut avoir plusieurs avis.
+
+
+
+En complément de ce diagramme et pour plus de précisions, voici une clarification sur le comportement des entités lors de la suppression.
+Nous avons décidé que tous les lieux associés à un utilisateur seront supprimés si celui-ci supprime son compte.
+En revanche, ses avis seront conservés.
+À l’inverse, si un lieu est supprimé, tous les avis qui lui sont liés seront également supprimés.
+Les méthodes DELETE ont été implémentées uniquement pour les avis, mais cette précision vise à expliciter la logique de suppression appliquée aux différentes entités.
+
 
 # Fichiers unittest
 

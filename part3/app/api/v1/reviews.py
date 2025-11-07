@@ -46,10 +46,10 @@ class ReviewList(Resource):
         existing_place = facade.get_place(review_data['place_id'])
         if not existing_place:
             return {'error': 'This place doesn\'t exist'}, 404
-        
+
         current_user = get_jwt_identity()
         user = facade.get_user(current_user)
-  
+
         review_data['user'] = user
 
         if current_user == existing_place.user.id:
@@ -59,15 +59,13 @@ class ReviewList(Resource):
             if current_user == existing_review.user.id:
                 return {
                     "message": "You have already reviewed this place."
-                    }, 400
+                }, 400
         review_data['place'] = existing_place
         review_data.pop('place_id')
         try:
             review = facade.create_review(review_data)
         except ValueError:
             return {'error': 'Invalid input data'}, 400
-
-
 
         return {
             'id': review.id,
@@ -161,11 +159,12 @@ class ReviewResource(Resource):
 
         for key in update_data:
             if key == 'place_id' or key == 'user_id' or key == 'id':
-                    return {'error': 'You cannot modify and enter ids.'}, 403
+                return {'error': 'You cannot modify and enter ids.'}, 403
         for key in update_data:
             if key == 'place' or key == 'user':
                 if update_data[key] != getattr(review, key):
-                    return {'error: You cannot modify the objects link to the review.'}, 403
+                    return {'error: You cannot modify the objects link to the'
+                            'review.'}, 403
 
         current_user = get_jwt_identity()
         if current_user != review.user.id:
@@ -235,9 +234,9 @@ class PlaceReviewList(Resource):
             return {'error': 'Place not found'}, 404
 
         review_list = [{
-                'id': review.id,
-                'text': review.text,
-                'rating': review.rating
-            } for review in place.reviews]
+            'id': review.id,
+            'text': review.text,
+            'rating': review.rating
+        } for review in place.reviews]
 
         return review_list, 200

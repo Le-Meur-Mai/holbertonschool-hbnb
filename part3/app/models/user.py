@@ -29,7 +29,8 @@ class User(BaseModel):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     reviews = relationship('Review', backref='user', lazy=True)
-    places = relationship('Place', backref='user', lazy=True, cascade=('all, delete'))
+    places = relationship('Place', backref='user',
+                          lazy=True, cascade=('all, delete'))
 
     def __init__(self, first_name, last_name, email, password):
         """Initialize a new User instance with validation."""
@@ -39,7 +40,6 @@ class User(BaseModel):
         self.email = email
         self.hash_password(password)
         self.is_admin = False
-
 
     def hash_password(self, password):
         """Hashes the password before storing it."""
@@ -80,10 +80,9 @@ class User(BaseModel):
         Raises:
             ValueError: If the first name is empty or None.
         """
-        if not value or type(value) != str or len(value) > 50:
+        if not value or type(value) is not str or len(value) > 50:
             raise ValueError
         return value
-
 
     @validates("last_name")
     def verify_last_name(self, key, value):
@@ -95,6 +94,6 @@ class User(BaseModel):
         Raises:
             ValueError: If the last name is empty or None.
         """
-        if not value or type(value) != str or len(value) > 50:
+        if not value or type(value) is not str or len(value) > 50:
             raise ValueError
         return value

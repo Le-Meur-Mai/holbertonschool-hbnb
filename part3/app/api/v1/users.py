@@ -133,13 +133,13 @@ class UserResource(Resource):
         if current_user != user_id:
             return {
                 "error": "Unauthorized action."
-                }, 403
+            }, 403
         for key in update_data:
             if key == 'email' or key == 'password' or key == 'id':
                 if update_data[key] != getattr(user, key):
                     return {
                         'error': 'You cannot modify email or password.'
-                        }, 400
+                    }, 400
 
         try:
             facade.update_user(user_id, update_data)
@@ -153,6 +153,7 @@ class UserResource(Resource):
             'email': user.email,
             'is_admin': user.is_admin
         }, 200
+
 
 @api.route('/admin/')
 class AdminUserCreate(Resource):
@@ -193,7 +194,7 @@ class AdminUserResource(Resource):
         password = update_data.get('password')
         user = facade.get_user(user_id)
 
-        if user == None:
+        if user is None:
             return {'error': 'User not found'}, 404
 
         if email:

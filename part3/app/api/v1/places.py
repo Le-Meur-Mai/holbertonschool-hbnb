@@ -76,7 +76,7 @@ class PlaceList(Resource):
 
         # Getting each amenity object by their name, to put in the list
         if amenities:
-            if type(amenities) != list:
+            if type(amenities) is not list:
                 raise ValueError('error, amenities should be a list')
             list_amenities = []
             for amenity_name in place_data['amenities']:
@@ -176,7 +176,7 @@ class PlaceResource(Resource):
 
         Args:
             place_id (str): The unique identifier of the place.
-        
+
         Payload:
         "amenity": "{the name of the amenity}
 
@@ -188,7 +188,7 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-        
+
         current_user = get_jwt_identity()
         if current_user != place.user.id:
             return {'error': 'Unauthorized action'}, 403
@@ -197,7 +197,7 @@ class PlaceResource(Resource):
         list_new_amenities = []
         new_amenities = data_amenity.get("amenities")
 
-        if type(new_amenities) != list:
+        if type(new_amenities) is not list:
             return {"error": "amenities must be a list"}
 
         for name_amenity in data_amenity['amenities']:
@@ -248,13 +248,14 @@ class PlaceResource(Resource):
             return {'error': 'Unauthorized action'}, 403
         for key in data_place:
             if key == 'owner_id' or key == 'id':
-                    return {
-                        'error': 'You cannot modify/enter the owner id or the place id.'
-                        }, 403
+                return {
+                    'error': 'You cannot modify/enter the owner id or'
+                    'the place id.'
+                }, 403
 
         if data_amenities:
-            if type(data_amenities) != list:
-                return { 'error': 'amenities must be a list'}, 400
+            if type(data_amenities) is not list:
+                return {'error': 'amenities must be a list'}, 400
             list_amenities = []
             for amenity_name in data_amenities:
                 new_amenity = facade.get_amenity_by_name(amenity_name)
@@ -269,6 +270,9 @@ class PlaceResource(Resource):
             return {'error': 'Invalid input data'}, 400
 
         return {"message": "Place updated successfully"}, 200
+
+    """ADMIN ROUTES"""
+
 
 @api.route('/admin/<place_id>')
 class AdminPlaceModify(Resource):
@@ -289,9 +293,10 @@ class AdminPlaceModify(Resource):
         data_place = api.payload
         for key in data_place:
             if key == 'owner_id' or key == 'id' or key == 'user':
-                    return {
-                        'error': 'You cannot modify/enter the owner or the place id.'
-                        }, 403
+                return {
+                    'error': 'You cannot modify/enter the owner or the place'
+                    'id.'
+                }, 403
 
         data_amenities = data_place.get(("amenities"))
         if data_amenities:

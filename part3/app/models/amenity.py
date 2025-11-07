@@ -5,9 +5,12 @@ from sqlalchemy.orm import relationship
 from app import db
 
 place_amenity = db.Table('place_amenity',
-    Column('place_id', Integer, ForeignKey('places.id'), primary_key=True),
-    Column('amenity_id', Integer, ForeignKey('amenities.id'), primary_key=True)
-)
+                         Column('place_id', Integer, ForeignKey(
+                             'places.id'), primary_key=True),
+                         Column('amenity_id', Integer, ForeignKey(
+                             'amenities.id'), primary_key=True)
+                         )
+
 
 class Amenity(BaseModel):
     """Model representing an amenity (feature or service) available in a place.

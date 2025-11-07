@@ -114,14 +114,14 @@ class AmenityResource(Resource):
                 if update_data[key] != getattr(amenity, key):
                     return {
                         'error': 'You cannot modify id.'
-                        }, 400
+                    }, 400
         try:
             facade.update_amenity(amenity_id, update_data)
         except ValueError:
             return {'error': 'Invalid input data'}, 400
 
         return {"message": "Amenity updated successfully"}
-    
+
     @api.route('/admin/')
     class AdminAmenityCreate(Resource):
         @jwt_required()
@@ -137,7 +137,7 @@ class AmenityResource(Resource):
             new_amenity = facade.create_amenity(amenity_data)
 
             return {'id': new_amenity.id, 'name': new_amenity.name}, 201
-        
+
     @api.route('/admin/<amenity_id>')
     class AdminAmenityModify(Resource):
         @jwt_required()
@@ -159,7 +159,7 @@ class AmenityResource(Resource):
                     if update_data[key] != getattr(amenity, key):
                         return {
                             'error': 'You cannot modify id.'
-                            }, 400
+                        }, 400
             try:
                 facade.update_amenity(amenity_id, update_data)
             except ValueError:

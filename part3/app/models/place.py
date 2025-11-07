@@ -29,7 +29,8 @@ class Place(BaseModel):
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    reviews = relationship('Review', backref='place', lazy=True, cascade=('all, delete'))
+    reviews = relationship('Review', backref='place',
+                           lazy=True, cascade=('all, delete'))
 
     def __init__(self, title, description, price, latitude, longitude,
                  user, amenities=None):
@@ -54,7 +55,7 @@ class Place(BaseModel):
         Raises:
             ValueError: If the title is empty or None.
         """
-        if not value or type(value) != str:
+        if not value or type(value) is not str:
             raise ValueError
         return value
 

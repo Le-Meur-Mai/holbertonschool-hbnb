@@ -231,6 +231,7 @@ Ce sont les propriétées d'une entité comme son identifiant (id) (User.id), ou
 ### Relation:
 C'est un lien entre deux entités pour définir leurs comportements (many to many, one to many). Par exemple un lieu peut avoir plusieurs avis.
 
+<img width="1260" height="2105" alt="ER Diagram" src="https://github.com/user-attachments/assets/08931ffb-0f78-44c6-8e68-70fb6fd91d00" />
 
 
 En complément de ce diagramme et pour plus de précisions, voici une clarification sur le comportement des entités lors de la suppression.

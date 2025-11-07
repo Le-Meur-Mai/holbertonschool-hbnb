@@ -122,10 +122,28 @@ class AmenityResource(Resource):
 
         return {"message": "Amenity updated successfully"}
 
+    """ADMIN ROUTES"""
+
     @api.route('/admin/')
     class AdminAmenityCreate(Resource):
+        """Resource for handling creation of amenities."""
         @jwt_required()
         def post(self):
+            """
+        Register a new amenity.
+
+        This endpoint allows clients to create a new amenity by providing
+        a JSON payload with a `name` field if you are an admin.
+
+        Returns:
+            list: A JSON response containing the new amenity's ID and name,
+            along with a 201 status code upon success.
+            If the user is not an admin, returns an error message with status
+            code 403.
+            If the amenity already exists or the input is invalid, returns
+            an error message with status code 400.
+        """
+
             additionnal_claim = get_jwt()
             if not additionnal_claim["is_admin"]:
                 return {'error': 'Admin privileges required'}, 403
@@ -140,8 +158,26 @@ class AmenityResource(Resource):
 
     @api.route('/admin/<amenity_id>')
     class AdminAmenityModify(Resource):
+        """Resource for updating a specific amenity by ID."""
         @jwt_required()
         def put(self, amenity_id):
+            """
+        Update an existing amenity.
+
+        This endpoint allows updating the name of an existing amenity if you
+        are an admin.
+
+        Args:
+            amenity_id (str): The unique identifier of the amenity to update.
+
+        Returns:
+            list: A success message with a 200 status code
+                if the update is successful.
+            If the user is not an admin, returns a 403 error.
+            If the amenity is not found, returns a 404 error.
+            If the input data is invalid, returns a 400 error.
+        """
+
             additionnal_claim = get_jwt()
             if not additionnal_claim["is_admin"]:
                 return {'error': 'Admin privileges required'}, 403

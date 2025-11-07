@@ -111,7 +111,7 @@ class UserResource(Resource):
         Update an existing user's profile.
 
         This endpoint allows modifying a user's information such as first name,
-        last name, or email.
+        or last name.
 
         Args:
             user_id (str): The unique identifier of the user to update.
@@ -154,11 +154,31 @@ class UserResource(Resource):
             'is_admin': user.is_admin
         }, 200
 
+    """ADMIN ROUTES"""
+
 
 @api.route('/admin/')
 class AdminUserCreate(Resource):
+    """Resource for creating and listing users."""
     @jwt_required()
     def post(self):
+        """
+        Register a new user, only admin can access this route
+
+        This endpoint creates a new user with the provided information.
+        The email must be unique in the system.
+
+        Returns:
+            list: A JSON object containing the new user's details
+                (ID, first name, last name, email)
+                and a 201 status code upon success.
+
+        Errors:
+            400 - If the email is already registered or
+                if the input data is invalid.
+            403 - If the user is not an admin
+        """
+
         additionnal_claim = get_jwt()
         if not additionnal_claim["is_admin"]:
             return {'error': 'Admin privileges required'}, 403
@@ -182,8 +202,28 @@ class AdminUserCreate(Resource):
 
 @api.route('/admin/<user_id>')
 class AdminUserResource(Resource):
+    """Resource for updating a specific user."""
     @jwt_required()
     def put(self, user_id):
+        """
+        Update an existing user's profile only admins can access this route.
+
+        This endpoint allows modifying a user's information such as first name,
+        last name, email or password.
+
+        Args:
+            user_id (str): The unique identifier of the user to update.
+
+        Returns:
+            list: A JSON object containing the updated user's details
+            and a 200 status code upon success.
+
+        Errors:
+            400 - If the input data is invalid.
+            403 - If the user is not an admin
+            404 - If the user is not found.
+        """
+
         # If 'is_admin' is part of the identity payload
         additionnal_claim = get_jwt()
         if not additionnal_claim["is_admin"]:

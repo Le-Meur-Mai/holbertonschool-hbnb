@@ -276,8 +276,30 @@ class PlaceResource(Resource):
 
 @api.route('/admin/<place_id>')
 class AdminPlaceModify(Resource):
+    """Resource for updating, or modifying a specific place."""
     @jwt_required()
     def put(self, place_id):
+        """
+        Update an existing place.
+
+        This endpoint allows modifying details of an existing place,
+        such as title, description, location, price, owner, or amenities if
+        you are an admin.
+
+        WARNING: If you want to add new amenities to the existing amenities
+        please use the Post Method, The Put Method will overwrite the previous
+        amenities.
+
+        Args:
+            place_id (str): The unique identifier of the place to update.
+
+        Returns:
+            list: A success message with a 200 status code upon success.
+            If the user is not en admin, returns a 403 error.
+            If the place is not found, returns a 404 error.
+            If the input data is invalid, returns a 400 error.
+        """
+
         current_user = get_jwt_identity()
         additionnal_claim = get_jwt()
 
@@ -287,7 +309,7 @@ class AdminPlaceModify(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'place not found'}, 404
-        if not is_admin and place.user.id != current_user:
+        if not is_admin:
             return {'error': 'Unauthorized action'}, 403
 
         data_place = api.payload

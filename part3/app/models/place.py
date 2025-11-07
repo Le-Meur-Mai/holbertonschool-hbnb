@@ -1,4 +1,8 @@
-from app.models.basemodel import BaseModel as BaseModel
+from app.models.basemodel import BaseModel
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import validates
+from sqlalchemy.orm import relationship
+from app import db
 
 
 class Place(BaseModel):
@@ -17,44 +21,31 @@ class Place(BaseModel):
         reviews (list): List of reviews associated with the place.
         amenities (list): List of amenities associated with the place.
     """
+    __tablename__ = 'places'
+
+    title = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(250))
+    price = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    reviews = relationship('Review', backref='place', lazy=True, cascade=('all, delete'))
 
     def __init__(self, title, description, price, latitude, longitude,
-                 owner_id):
+                 user, amenities=None):
         """Initialize a new Place instance with validation."""
         super().__init__()
-        self.__title = None
         self.title = title
         self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner_id = owner_id
-        self.reviews = []  # List to store related reviews
-        self.amenities = []  # List to store related amenities
+        self.user = user
+        if amenities:
+            self.amenities = amenities
 
-    def add_review(self, review):
-        """Add a review to the place.
-
-        Args:
-            review: A Review object to associate with this place.
-        """
-        self.reviews.append(review)
-
-    def add_amenity(self, amenity):
-        """Add an amenity to the place.
-
-        Args:
-            amenity: An Amenity object to associate with this place.
-        """
-        self.amenities.append(amenity)
-
-    @property
-    def title(self):
-        """str: Get the title of the place."""
-        return self.__title
-
-    @title.setter
-    def title(self, value):
+    @validates("title")
+    def verify_title(self, key, value):
         """Set the title of the place.
 
         Args:
@@ -63,17 +54,12 @@ class Place(BaseModel):
         Raises:
             ValueError: If the title is empty or None.
         """
-        if not value:
+        if not value or type(value) != str:
             raise ValueError
-        self.__title = value
+        return value
 
-    @property
-    def price(self):
-        """float: Get the price of the place."""
-        return self._price
-
-    @price.setter
-    def price(self, value):
+    @validates("price")
+    def verify_price(self, key, value):
         """Set the price of the place.
 
         Args:
@@ -87,15 +73,10 @@ class Place(BaseModel):
             raise TypeError("Price enter is not of type float")
         elif value < 0:
             raise ValueError("Price should be positive")
-        self._price = value
+        return value
 
-    @property
-    def latitude(self):
-        """float: Get the latitude coordinate."""
-        return self.__latitude
-
-    @latitude.setter
-    def latitude(self, value):
+    @validates("latitude")
+    def verify_latitude(self, key, value):
         """Set the latitude coordinate.
 
         Args:
@@ -109,15 +90,10 @@ class Place(BaseModel):
             raise TypeError("Latitude must be a number")
         elif value > 90 or value < -90:
             raise ValueError("Latitude must be between 90 and -90")
-        self.__latitude = value
+        return value
 
-    @property
-    def longitude(self):
-        """float: Get the longitude coordinate."""
-        return self.__longitude
-
-    @longitude.setter
-    def longitude(self, value):
+    @validates("longitude")
+    def verify_longitude(self, key, value):
         """Set the longitude coordinate.
 
         Args:
@@ -131,4 +107,4 @@ class Place(BaseModel):
             raise TypeError("Longitude must be a number")
         elif value > 180 or value < -180:
             raise ValueError("Longitude must be between 180 and -180")
-        self.__longitude = value
+        return value

@@ -1,5 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from app import db
 
 api = Namespace('places', description='Place operations')
 
@@ -41,13 +43,14 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
         """
         Register a new place.
 
         This endpoint allows clients to register a new place by providing
-        its title, description, location (latitude, longitude), price,
-        owner ID, and a list of amenity IDs.
+        its title, description, location (latitude, longitude), price
+        and a list of amenities's name.
 
         Returns:
             list: A JSON response containing the created place's details
@@ -65,9 +68,24 @@ class PlaceList(Resource):
             place_data['longitude'])
         if existing_place is True:
             return {'error': 'This place already exists'}, 400
-        existing_user = facade.get_user(place_data['owner_id'])
-        if not existing_user:
-            return {'error': 'This user doesn\'t exist'}, 404
+
+        current_user = get_jwt_identity()
+        user = facade.get_user(current_user)
+        place_data['user'] = user
+        amenities = place_data.get('amenities')
+
+        # Getting each amenity object by their name, to put in the list
+        if amenities:
+            if type(amenities) != list:
+                raise ValueError('error, amenities should be a list')
+            list_amenities = []
+            for amenity_name in place_data['amenities']:
+                new_amenity = facade.get_amenity_by_name(amenity_name)
+                if not new_amenity:
+                    return {'error': 'One amenity not found'}, 404
+                list_amenities.append(new_amenity)
+            place_data['amenities'] = list_amenities
+
         try:
             new_place = facade.create_place(place_data)
         except (ValueError, TypeError):
@@ -79,7 +97,7 @@ class PlaceList(Resource):
                 'price': new_place.price,
                 'latitude': new_place.latitude,
                 'longitude': new_place.longitude,
-                'owner_id': new_place.owner_id}, 201
+                'owner_id': new_place.user.id}, 201
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
@@ -131,7 +149,6 @@ class PlaceResource(Resource):
                 'name': amenity.name
             } for amenity in place.amenities]
 
-        data_owner = facade.get_user(place.owner_id)
         return {
             'id': place.id,
             'title': place.title,
@@ -140,16 +157,17 @@ class PlaceResource(Resource):
             'latitude': place.latitude,
             'longitude': place.longitude,
             'owner': {
-                "id": place.owner_id,
-                "first_name": data_owner.first_name,
-                "last_name": data_owner.last_name,
-                "email": data_owner.email
+                "id": place.user.id,
+                "first_name": place.user.first_name,
+                "last_name": place.user.last_name,
+                "email": place.user.email
             },
             'amenities': list_amenities
         }, 200
 
     @api.response(404, 'Place not found')
     @api.response(200, 'Amenity added successfuly')
+    @jwt_required()
     def post(self, place_id):
         """
         Add an amenity to a specific place.
@@ -158,6 +176,9 @@ class PlaceResource(Resource):
 
         Args:
             place_id (str): The unique identifier of the place.
+        
+        Payload:
+        "amenity": "{the name of the amenity}
 
         Returns:
             list: A JSON object confirming the addition of the amenity
@@ -167,27 +188,45 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
+        
+        current_user = get_jwt_identity()
+        if current_user != place.user.id:
+            return {'error': 'Unauthorized action'}, 403
 
         data_amenity = api.payload
-        amenity = facade.get_amenity(data_amenity["id"])
-        place.amenities.append(amenity)
+        list_new_amenities = []
+        new_amenities = data_amenity.get("amenities")
+
+        if type(new_amenities) != list:
+            return {"error": "amenities must be a list"}
+
+        for name_amenity in data_amenity['amenities']:
+            amenity = facade.get_amenity_by_name(name_amenity)
+            if not amenity:
+                return {'error': 'Amenity not found'}, 404
+            place.amenities.append(amenity)
+            list_new_amenities.append({'id': amenity.id,
+                                       'name': amenity.name})
+        # Save the add of the new amenities in the database
+        db.session.commit()
         return {
-            'amenity successfully added': {
-                "id": amenity.id,
-                'name': amenity.name
-            }
-        }, 200
+            'amenities successfully added': list_new_amenities}, 200
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, place_id):
         """
         Update an existing place.
 
         This endpoint allows modifying details of an existing place,
         such as title, description, location, price, owner, or amenities.
+
+        WARNING: If you want to add new amenities to the existing amenities
+        please use the Post Method, The Put Method will overwrite the previous
+        amenities.
 
         Args:
             place_id (str): The unique identifier of the place to update.
@@ -201,10 +240,69 @@ class PlaceResource(Resource):
         if not place:
             return {'error': 'Place not found'}, 404
 
+        current_user = get_jwt_identity()
         data_place = api.payload
-        existing_user = facade.get_user(data_place['owner_id'])
-        if not existing_user:
-            return {'error': 'This user doesn\'t exist'}, 404
+        data_amenities = data_place.get('amenities')
+
+        if current_user != place.user.id:
+            return {'error': 'Unauthorized action'}, 403
+        for key in data_place:
+            if key == 'owner_id' or key == 'id':
+                    return {
+                        'error': 'You cannot modify/enter the owner id or the place id.'
+                        }, 403
+
+        if data_amenities:
+            if type(data_amenities) != list:
+                return { 'error': 'amenities must be a list'}, 400
+            list_amenities = []
+            for amenity_name in data_amenities:
+                new_amenity = facade.get_amenity_by_name(amenity_name)
+                if not new_amenity:
+                    return {'error': 'One amenity not found'}, 404
+                list_amenities.append(new_amenity)
+            data_place['amenities'] = list_amenities
+
+        try:
+            facade.update_place(place_id, data_place)
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
+
+        return {"message": "Place updated successfully"}, 200
+
+@api.route('/admin/<place_id>')
+class AdminPlaceModify(Resource):
+    @jwt_required()
+    def put(self, place_id):
+        current_user = get_jwt_identity()
+        additionnal_claim = get_jwt()
+
+        # Set is_admin default to False if not exists
+        is_admin = additionnal_claim["is_admin"]
+
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'place not found'}, 404
+        if not is_admin and place.user.id != current_user:
+            return {'error': 'Unauthorized action'}, 403
+
+        data_place = api.payload
+        for key in data_place:
+            if key == 'owner_id' or key == 'id' or key == 'user':
+                    return {
+                        'error': 'You cannot modify/enter the owner or the place id.'
+                        }, 403
+
+        data_amenities = data_place.get(("amenities"))
+        if data_amenities:
+            list_amenities = []
+            for amenity_name in data_amenities:
+                new_amenity = facade.get_amenity_by_name(amenity_name)
+                if not new_amenity:
+                    return {'error': 'One amenity not found'}, 404
+                list_amenities.append(new_amenity)
+            data_place['amenities'] = list_amenities
+
         try:
             facade.update_place(place_id, data_place)
         except ValueError:

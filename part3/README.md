@@ -17,6 +17,8 @@
   - [test_amenity.py](#test_amenitypy)  
   - [test_review.py](#test_reviewpy)
 
+- [Lancer l'application](#Lancer-l'application)
+
 <br>
 
 # Structure du projet
@@ -325,3 +327,16 @@ Commande de test: python3 test_amenity.py
 | `test_get_all_amenities`        | Récupération de toutes les commodités via l’API                         | Requête GET sans payload                             | Code de réponse `200`                                  | Code de réponse `200`                                  |
 | `test_valid_update_amenity`     | Mise à jour d’une commodité avec un nom valide                          | `{ "name": "Jacuzzi" }`                              | Mise à jour réussie, attribut modifié                  | Mise à jour réussie, attribut `name` mis à jour        |
 | `test_invalid_update_amenity`   | Mise à jour d’une commodité avec un nom vide                            | `{ "name": "" }`                                     | Exception `ValueError` et échec de la mise à jour                                | Exception `ValueError` et échec de la mise à jour                                  |
+
+
+<br>
+
+# Lancer l'application
+
+Voici ci-dessous, les différentes étapes pour lancer l'application :
+
+- Installez tous les outils/extensions requis avec la commande :
+pip install -r requirements
+
+- Lancez l'application en étant dans /holbertonschool-hbnb/part3 :
+python3 run.py

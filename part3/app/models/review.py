@@ -22,7 +22,8 @@ class Review(BaseModel):
     text = db.Column(db.String(500))
     rating = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
+    place_id = db.Column(db.Integer, db.ForeignKey(
+        'places.id'), nullable=False)
 
     def __init__(self, text, rating, place, user):
         super().__init__()
@@ -41,7 +42,7 @@ class Review(BaseModel):
         Raises:
             ValueError: If the text is empty or None.
         """
-        if not value or type(value) != str or len(value) > 500:
+        if not value or type(value) is not str or len(value) > 500:
             raise ValueError
         return value
 

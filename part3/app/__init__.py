@@ -10,6 +10,7 @@ bcrypt = Bcrypt()
 
 db = SQLAlchemy()
 
+
 def create_app(config_class="config.DevelopmentConfig"):
     """Create and configure the Flask application with Flask-RESTX.
 
@@ -40,7 +41,7 @@ def create_app(config_class="config.DevelopmentConfig"):
     )
 
     db.init_app(app)
-    
+
     # Register the users namespace
     api.add_namespace(users_ns, path='/api/v1/users')
     # Register the places namespace
@@ -51,6 +52,5 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     # Register the authentification namespace
     api.add_namespace(auth_ns, path='/api/v1/auth')
-    
 
     return app

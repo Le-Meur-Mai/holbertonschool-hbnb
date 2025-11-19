@@ -3,6 +3,7 @@ from flask_restx import Api
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
+import requests
 
 jwt = JWTManager()
 
@@ -64,6 +65,15 @@ def create_app(config_class="config.DevelopmentConfig"):
     
     @app.route('/place')
     def places():
-        return render_template('place.html')
+        try:
+            id = request.args.get('id')
+            place = requests.get(f'http://127.0.0.1:5000/api/v1/places/{id}')
+            place = place.json()
+            reviews = requests.get(f'http://127.0.0.1:5000/api/v1/reviews/places/{id}/reviews')
+            reviews = reviews.json()
+        except Exception as error:
+            place = error
+            reviews = error
+        return render_template('place.html', place=place, reviews=reviews)
 
     return app

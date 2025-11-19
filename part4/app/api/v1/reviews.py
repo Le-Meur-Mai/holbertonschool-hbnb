@@ -235,7 +235,7 @@ class PlaceReviewList(Resource):
 
         review_list = [{
             'id': review.id,
-            'user': review.user,
+            'user': review.user.first_name,
             'text': review.text,
             'rating': review.rating
         } for review in place.reviews]

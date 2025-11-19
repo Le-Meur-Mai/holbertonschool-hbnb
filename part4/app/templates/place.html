@@ -12,34 +12,35 @@
         <section id="place-details">
             {% if place %}
                 <div class="place-details place-info">
-                    <h3>{% place.title %}</h3>
-                    <p>{% place.description %}
-                        Price: {% place.price %}
+                    <h3>{{ place.title }}</h3>
+                    <p>{{ place.description }}
+                        <br>
+                        Price: {{ place.price }}
                     </p>
                     <h4>Amenities</h4>
                     <ul>
                         {% for amenity in place.amenities %}
-                            <li>{% amenity %}</li>
+                            <li>{{ amenity.name }}</li>
                         {% endfor %}
                     </ul>
                     <h4>Owner</h4>
                     <p>
-                        {% place.owner.first_name %}
-                        {% place.owner.last_name %}
-                        {% place.owner.email %}
+                        {{ place.owner.first_name }}
+                        {{ place.owner.last_name }}
+                        {{ place.owner.email }}
                     </p>
                 </div>
             {% else %}
-                <p>{% place %}</p>
+                <p>{{ place }}</p>
             {% endif %}
         </section>
         <section id="reviews">
             {% if reviews %}
                 {% for review in reviews %}
                     <div class="place-details place-info">
-                        <h5>Rating : {% review.rating %}</h5>
-                        <p>{% review.text %}</p>
-                        <h6>{% review.user %}</h6>
+                        <p>Rating : {{ review.rating }}</p>
+                        <p>{{ review.text }}</p>
+                        <h5>{{ review.user }}</h5>
                     </div>
                     {% endfor %}
             {% endif %}

@@ -4,45 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Place Details</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesplaces.css') }}">
 </head>
 <body>
     {% include 'header.html' %}
     <main>
         <section id="place-details">
             {% if place %}
-                <div class="place-details place-info">
-                    <h3>{{ place.title }}</h3>
+                <div class="place-details">
+                    <h1>{{ place.title }}</h1>
                     <p>{{ place.description }}
                         <br>
-                        Price: {{ place.price }}
+                        <strong>Price: </strong> ${{ place.price }}
                     </p>
-                    <h4>Amenities</h4>
-                    <ul>
-                        {% for amenity in place.amenities %}
-                            <li>{{ amenity.name }}</li>
-                        {% endfor %}
-                    </ul>
+                    <h4>Amenities:</h4>
+                    {% if place.amenities %}
+                        <ul>
+                            {% for amenity in place.amenities %}
+                                <li>{{ amenity.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No amenities</p>
+                    {% endif %}
+                </div>
+                <div class="place-infos">
                     <h4>Owner</h4>
                     <p>
                         {{ place.owner.first_name }}
                         {{ place.owner.last_name }}
+                        <br>
                         {{ place.owner.email }}
                     </p>
                 </div>
             {% else %}
-                <p>{{ place }}</p>
+                <div class="place-details">
+                    <p>Place Not Found</p>
+                </div>
             {% endif %}
         </section>
         <section id="reviews">
+            <h2>Reviews:</h2>
             {% if reviews %}
                 {% for review in reviews %}
-                    <div class="place-details place-info">
-                        <p>Rating : {{ review.rating }}</p>
+                    <div class="review-card">
+                        <h4>{{ review.user }}</h4>
+                        <br>
+                        <p>Rating : {% for _ in range(review.rating) %}
+                                        ★
+                                    {% endfor %}
+                        </p>
                         <p>{{ review.text }}</p>
-                        <h5>{{ review.user }}</h5>
                     </div>
                     {% endfor %}
+            {% else %}
+                    <p class="review-card">No reviews</p>
             {% endif %}
         </section>
         <section id="add-review">

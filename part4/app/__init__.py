@@ -72,8 +72,15 @@ def create_app(config_class="config.DevelopmentConfig"):
             reviews = requests.get(f'http://127.0.0.1:5000/api/v1/reviews/places/{id}/reviews')
             reviews = reviews.json()
         except Exception as error:
-            place = error
-            reviews = error
+            place = None
+            reviews = None
+        if place.get('error'):
+            place = None
+            reviews = None
         return render_template('place.html', place=place, reviews=reviews)
+    
+    @app.route('/review')
+    def review():
+        id = id = request.args.get('id')
 
     return app

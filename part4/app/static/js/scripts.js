@@ -4,6 +4,7 @@
 */
 
 document.addEventListener('DOMContentLoaded', () => {
+  /* Managing the display of all places */
     const url = '/api/v1/places';
     const filter = document.querySelector('#price-filter')
 
@@ -19,14 +20,45 @@ document.addEventListener('DOMContentLoaded', () => {
           const box = document.createElement('div');
           box.className ='place-card';
           let place = dataList[i];
-          box.innerHTML = `<h3>${place.title}</h3>
+          box.innerHTML = `<div class="box-content">
+          <h3>${place.title}</h3>
           <p>Price per night: $${place.price}</p>
+          </div>
           <a href="place?id=${place.id}"><button class=details-button>View Details</button></a>`;
           card_place.appendChild(box);
         }
       }
 
       displayPlaces(data);
+
+      /* Managing the authentification */
+
+      function checkAuthentication() {
+        const token = getCookie('token');
+        const loginLink = document.getElementById('login-link');
+
+        if (!token) {
+            loginLink.style.display = 'block';
+        } else {
+            loginLink.style.display = 'none';
+        }
+      }
+      function getCookie(name) {
+      // Function to get a cookie value by its name
+        const cookies = document.cookie.split('; ');
+        /* If there is several cookies, they will be stocked with a ;
+        so we make a list of every key=value */
+        for (let k = 0 ; k < cookies.length; k++) {
+          const cookie = cookies[k].trim().split('=');
+          if (cookie[0] === name)
+            return decodeURIComponent(cookie[1]);
+        }
+        return (null);
+      }
+
+      checkAuthentication();
+
+      /* Managing the price Filter */
 
       function selectByPrice(dataList) {
         const priceFilter = parseInt(document.querySelector('#price-filter').value);

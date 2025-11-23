@@ -67,6 +67,10 @@ def create_app(config_class="config.DevelopmentConfig"):
     def places():
         try:
             id = request.args.get('id')
+            if id == "":
+                id = 1
+            # If the ID is Null, it won't crash
+
             place = requests.get(f'http://127.0.0.1:5000/api/v1/places/{id}')
             place = place.json()
             reviews = requests.get(f'http://127.0.0.1:5000/api/v1/reviews/places/{id}/reviews')
@@ -81,6 +85,19 @@ def create_app(config_class="config.DevelopmentConfig"):
     
     @app.route('/review')
     def review():
-        return render_template('add_review.html')
+        try:
+            id = request.args.get('id')
+            if id == "":
+                id = 1
+            # If the ID is Null, it won't crash
+
+            place = requests.get(f'http://127.0.0.1:5000/api/v1/places/{id}')
+            place = place.json()
+        except Exception:
+            place = None
+        if place.get('error'):
+            place = None
+
+        return render_template('add_review.html', place=place)
 
     return app

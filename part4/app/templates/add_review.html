@@ -4,31 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Review</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesadd_review.css') }}">
 </head>
 <body>
     {% include 'header.html' %}
     <main>
-        <!-- Add something to idfentify the place you're reviewing -->
-        <form id="review-form">
-            <h2>Add a Review</h2>
-            <br>
-            <label for="review">Your Review:</label>
-            <br>
-            <textarea id="review" name="review" required></textarea>
-            <br>
-            <label for="rating">Rating:</label>
-            <select id="rating" name="rating" required>
-                <option value=""></option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-            <br>
-            <button type="submit">Submit Review</button>
-        </form>
+        {% if place %}
+            <h1>Reviewing: {{ place.title }} </h1>
+            <form id="review-form">
+                <h2>Add a Review</h2>
+                <br>
+                <label for="review"><strong>Your Review:</strong></label>
+                <br>
+                <textarea id="review" name="review" required></textarea>
+                <br>
+                <label for="rating"><strong>Rating:</strong></label>
+                <select id="rating" name="rating" required>
+                    <option value=""></option>
+                    <option value="1">1 Star</option>
+                    <option value="2">2 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="5">5 Stars</option>
+                </select>
+                <br>
+                <button id="submit-button" type="submit">Submit Review</button>
+            </form>
+        {% else %}
+            <h1>Place Not Found</h1>
+        {% endif %}
     </main>
     {% include 'footer.html' %}
     <script src="{{ url_for('static', filename='js/scriptsreview.js') }}"></script>

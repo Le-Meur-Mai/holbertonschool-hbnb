@@ -1,11 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const login = document.getElementById('login-link');
+    const logout = document.getElementById('logout-link');
+    login.style.display = 'none';
+    logout.style.display = 'none';
+
     const loginForm = document.getElementById('login-form');
 
     if (loginForm) {
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const emailInput = document.querySelector('[name="email"]')
-            const passwordInput = document.querySelector('[name="password"]')
+            const emailInput = document.querySelector('[name="email"]');
+            const passwordInput = document.querySelector('[name="password"]');
             async function loginUser(email, password) {
                 const response = await fetch('http://127.0.0.1:5000/api/v1/auth/login', {
                     method: 'POST',

@@ -56,6 +56,11 @@ header {
     position: sticky;
 }
 
+.logo {
+    transform: scale(50%) translateX(-50%) translateY(-25%);
+    text-align: left;
+}
+
 /* Navigation Bar*/
 
 nav a {

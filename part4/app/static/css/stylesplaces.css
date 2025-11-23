@@ -63,6 +63,11 @@ nav a {
     bottom: 2rem;
 }
 
+.logo {
+    transform: scale(50%) translateX(-50%) translateY(-25%);
+    text-align: left;
+}
+
 
 
 /* buttons */

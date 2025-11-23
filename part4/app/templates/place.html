@@ -13,7 +13,13 @@
             {% if place %}
                 <div class="place-details">
                     <h1>{{ place.title }}</h1>
-                    <p>{{ place.description }}
+                    <p>
+                        {{ place.description }}
+                        <br>
+                        <br>
+                        <strong>Latitude: </strong>{{ place.latitude }}
+                        <br>
+                        <strong>Longitude: </strong>{{ place.longitude }}
                         <br>
                         <strong>Price: </strong> ${{ place.price }}
                     </p>
@@ -62,15 +68,10 @@
             {% endif %}
         </section>
         <section id="add-review">
-            <h2>Add a Review</h2>
-            <form id="review-form">
-                <label for="review-text">Review:</label>
-                <textarea id="review-text" name="review-text" required></textarea>
-                
-                <button type="submit">Submit</button>
-            </form>
+            <a href="review?id={{ place.id }}"><button>Add a Review</button></a>
         </section>
     </main>
     {% include 'footer.html' %}
+    <script src="{{ url_for('static', filename='js/scriptsplace.js') }}"></script>
 </body>
 </html>

@@ -6,7 +6,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   /* Managing the display of all places */
     const url = '/api/v1/places';
-    const filter = document.querySelector('#price-filter')
 
     fetch(url)
     .then(response => response.json())
@@ -36,10 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
       function checkAuthentication() {
         const token = getCookie('token');
         const loginLink = document.getElementById('login-link');
+        const logoutLink = document.getElementById('logout-link');
 
         if (!token) {
             loginLink.style.display = 'block';
+            logoutLink.style.display = 'none';
         } else {
+            logoutLink.style.display = 'block';
             loginLink.style.display = 'none';
         }
       }
@@ -56,14 +58,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return (null);
       }
 
+      function logoutUser() {
+        // Delete the cookie by rewriting it with a bad expiration date 
+        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1960 00:00:00 UTC";
+        window.location.href = "/login";
+      }
+
       checkAuthentication();
 
+      const logout = document.querySelector('#logout-link');
+      logout.addEventListener("click", logoutUser);
+
       /* Managing the price Filter */
+
+      const filter = document.querySelector('#price-filter')
 
       function selectByPrice(dataList) {
         const priceFilter = parseInt(document.querySelector('#price-filter').value);
         if (!isNaN(priceFilter)) {
-          newData = [];
+          let newData = [];
           for(let j = 0; dataList[j]; j++) {
             if (dataList[j].price <= priceFilter) {
               newData.push(dataList[j])

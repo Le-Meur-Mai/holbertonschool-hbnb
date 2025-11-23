@@ -54,15 +54,14 @@ def create_app(config_class="config.DevelopmentConfig"):
     # Register the authentification namespace
     api.add_namespace(auth_ns, path='/api/v1/auth')
 
-
     @app.route('/index')
     def home():
         return render_template('index.html')
-    
+
     @app.route('/login')
     def login():
         return render_template('login.html')
-    
+
     @app.route('/place')
     def places():
         try:
@@ -73,7 +72,8 @@ def create_app(config_class="config.DevelopmentConfig"):
 
             place = requests.get(f'http://127.0.0.1:5000/api/v1/places/{id}')
             place = place.json()
-            reviews = requests.get(f'http://127.0.0.1:5000/api/v1/reviews/places/{id}/reviews')
+            reviews = requests.get(
+                f'http://127.0.0.1:5000/api/v1/reviews/places/{id}/reviews')
             reviews = reviews.json()
         except Exception as error:
             place = None
@@ -82,7 +82,7 @@ def create_app(config_class="config.DevelopmentConfig"):
             place = None
             reviews = None
         return render_template('place.html', place=place, reviews=reviews)
-    
+
     @app.route('/review')
     def review():
         try:

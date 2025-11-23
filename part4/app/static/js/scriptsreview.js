@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const tokenUser = checkAuthentication();
-  console.log(tokenUser);
 
   /* Retrieve the url of the page and then the id in the query */
   const actualUrl = new URL(window.location.href);

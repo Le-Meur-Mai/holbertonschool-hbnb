@@ -81,6 +81,6 @@ def create_app(config_class="config.DevelopmentConfig"):
     
     @app.route('/review')
     def review():
-        id = id = request.args.get('id')
+        return render_template('add_review.html')
 
     return app

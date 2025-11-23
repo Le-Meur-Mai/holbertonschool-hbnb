@@ -12,16 +12,25 @@
         <!-- Add something to idfentify the place you're reviewing -->
         <form id="review-form">
             <h2>Add a Review</h2>
+            <br>
             <label for="review">Your Review:</label>
+            <br>
             <textarea id="review" name="review" required></textarea>
+            <br>
             <label for="rating">Rating:</label>
             <select id="rating" name="rating" required>
-                <!-- Options for rating -->
+                <option value=""></option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
             </select>
+            <br>
             <button type="submit">Submit Review</button>
         </form>
     </main>
     {% include 'footer.html' %}
-    <script src="scripts.js"></script>
+    <script src="{{ url_for('static', filename='js/scriptsreview.js') }}"></script>
 </body>
 </html>

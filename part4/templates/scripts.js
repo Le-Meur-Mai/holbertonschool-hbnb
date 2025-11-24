@@ -1,5 +1,8 @@
+const API_URL = 'http://127.0.0.1:5000/api/v1';
+
 document.addEventListener('DOMContentLoaded', async () => {
     const loginLink = document.getElementById("login-link");
+    const logoutLink = document.getElementById("logout-link");
     const token = getToken();
 
     // Cacher le bouton login si connecté
@@ -7,50 +10,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         loginLink.style.display = token ? "none" : "block";
     }
 
+    // Cacher le bouton logout si déconnecté
+    if (logoutLink) {
+        logoutLink.addEventListener('click', logoutUser);
+        logoutLink.style.display = token ? "block" : "none";
+    }
+
     const reviewForm = document.getElementById('review-form');
     const placeDetailsContainer = document.getElementById('place-details');
     const placeId = getPlaceIdFromURL();
 
-    // Redirection seulement si formulaire review présent et pas connecté
+    // Redirection seulement si formulaire review est présent et le user est non connecté
     if (reviewForm && !token) {
         window.location.href = 'index.html';
     }
     
+    // Cacher le bouton add_review si non connecté
     const addReviewButton = document.querySelector('.add-review-button');
     if (addReviewButton) {
         addReviewButton.style.display = token ? 'block' : 'none';
     }
 
     if (placeDetailsContainer && placeId) {
-        fetchPlaceDetails(token, placeId);
-        if (placeDetailsContainer && placeId) {
-            await fetchAndDisplayReviews(placeId, token);
-        }
+        await fetchPlaceDetails(token, placeId);
+        await fetchAndDisplayReviews(placeId, token);
     }   
 
     /* ---------------------- AFFICHAGE PLACES ---------------------- */
     const placesContainer = document.querySelector('.places');
 
-    try {
-        const response = await fetch('http://127.0.0.1:5000/api/v1/places/', {
-            method: 'GET',
-            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-        });
+    if (placesContainer) {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/v1/places/', {
+                method: 'GET',
+                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+            });
 
-        if (!response.ok) {
-            throw new Error('Erreur lors de la récupération des places');
-        }
+            if (!response.ok) {
+                throw new Error('Erreur lors de la récupération des places');
+            }
 
-        const places = await response.json();
-        console.log("Places récupérées :", places);
-
-        if (placesContainer) {
+            const places = await response.json();
             displayPlaces(places, placesContainer);
-        }
 
-    } catch (error) {
-        console.error('Fetch failed:', error);
-        if (placesContainer) {
+        } catch (error) {
+            console.error('Fetch failed:', error);
             placesContainer.innerHTML = `<p style="color:red;">Erreur: ${error.message}</p>`;
         }
     }
@@ -69,6 +73,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
+            const errorMessage = document.getElementById("error-message");
+
+            // Validation basique
+            if (!email || !password) {
+                errorMessage.textContent = "Email et mot de passe requis";
+                return;
+            }
 
             try {
                 const response = await fetch('http://127.0.0.1:5000/api/v1/auth/login', {
@@ -78,14 +89,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
                 const data = await response.json();
-                console.log("Réponse login :", data);
 
-                if (response.ok) {
+                if (response.ok && data.access_token) {
                     document.cookie = `token=${data.access_token}; path=/; SameSite=Lax`;
-                    console.log("Cookie après login :", document.cookie);
-                    window.location.href = '/index.html';
+                    window.location.href = 'index.html';
                 } else {
-                    document.getElementById("error-message").textContent = data.error || 'Login failed';
+                    errorMessage.textContent = data.error || 'Login failed';
                 }
 
             } catch (err) {
@@ -159,6 +168,21 @@ function checkAuthentication() {
     }
 
     return token;
+}
+
+function logoutUser() {
+    console.log("Cookie AVANT suppression:", document.cookie);
+    
+    // Supprimer le cookie
+    document.cookie = "token=; path=/; max-age=0; SameSite=Lax";
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax";
+    
+    console.log("Cookie APRÈS suppression:", document.cookie);
+    
+    setTimeout(() => {
+        console.log("Cookie AVANT reload:", document.cookie);
+        window.location.reload();
+    }, 100);
 }
 
 /* ---------------------- AFFICHAGE PLACES ---------------------- */

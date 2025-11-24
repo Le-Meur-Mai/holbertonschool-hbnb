@@ -30,12 +30,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const tokenUser = checkAuthentication();
 
+  /* Logout User */
+
+  function logoutUser () {
+    // Delete the cookie by rewriting it with a bad expiration date
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1960 00:00:00 UTC';
+    window.location.href = '/login';
+  }
+
+  const logout = document.querySelector('#logout-link');
+  logout.addEventListener('click', logoutUser);
+
   /* Retrieve the url of the page and then the id in the query */
   const actualUrl = new URL(window.location.href);
   const idPlace = actualUrl.searchParams.get('id');
 
   const reviewSubmit = document.getElementById('review-form');
 
+  /* Add a review to a place */
   async function addReview (place, text, rating, token) {
     const response = await fetch('http://127.0.0.1:5000/api/v1/reviews/', {
       method: 'POST',

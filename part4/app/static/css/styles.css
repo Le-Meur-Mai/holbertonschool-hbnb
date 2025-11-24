@@ -81,6 +81,9 @@ nav a {
 
 
 /* login page */
+#login-form h2 {
+    color: #333;
+}
 #login {
     color: #fff;
     background-color: #333;

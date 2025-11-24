@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginLink = document.getElementById('login-link');
     const logoutLink = document.getElementById('logout-link');
     const addReview = document.getElementById('add-review');
+    const loginNav = document.getElementById('login-nav');
 
     if (!token) {
       loginLink.style.display = 'block';
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
       addReview.style.display = 'block';
       logoutLink.style.display = 'block';
       loginLink.style.display = 'none';
+      loginNav.style.display = 'none';
     }
   }
 

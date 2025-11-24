@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = getCookie('token');
     const loginLink = document.getElementById('login-link');
     const logoutLink = document.getElementById('logout-link');
+    const loginNav = document.getElementById('login-nav');
 
     if (!token) {
       window.location.href = '/login';
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       logoutLink.style.display = 'block';
       loginLink.style.display = 'none';
+      loginNav.style.display = 'none';
       return (token);
     }
   }

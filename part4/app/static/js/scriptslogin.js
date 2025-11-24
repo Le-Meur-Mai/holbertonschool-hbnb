@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   const login = document.getElementById('login-link');
   const logout = document.getElementById('logout-link');
+  const loginNav = document.getElementById('login-nav');
   login.style.display = 'none';
   logout.style.display = 'none';
+  loginNav.style.display = 'none';
 
   const loginForm = document.getElementById('login-form');
 

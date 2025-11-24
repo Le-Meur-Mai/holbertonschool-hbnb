@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_restx import Api
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
@@ -38,21 +38,29 @@ def create_app(config_class="config.DevelopmentConfig"):
         version='1.0',
         title='HBnB API',
         description='HBnB Application API',
-        doc='/api/v1/'
+        doc='/api/v1/',
+        prefix='/api/v1'
     )
+    '''Add a prefix to initialize namespaces and the welcome page of api to
+    /api/v1 instead of just /, so when toy start the app, the user is directed
+    on the index page'''
 
     db.init_app(app)
 
     # Register the users namespace
-    api.add_namespace(users_ns, path='/api/v1/users')
+    api.add_namespace(users_ns, path='/users')
     # Register the places namespace
-    api.add_namespace(places_ns, path='/api/v1/places')
+    api.add_namespace(places_ns, path='/places')
     # Register the amenities namespace
-    api.add_namespace(amenities_ns, path='/api/v1/amenities')
+    api.add_namespace(amenities_ns, path='/amenities')
     # Register the reviews namespace
-    api.add_namespace(reviews_ns, path='/api/v1/reviews')
+    api.add_namespace(reviews_ns, path='/reviews')
     # Register the authentification namespace
-    api.add_namespace(auth_ns, path='/api/v1/auth')
+    api.add_namespace(auth_ns, path='/auth')
+
+    @app.route('/')
+    def index():
+        return redirect('/index')
 
     @app.route('/index')
     def home():

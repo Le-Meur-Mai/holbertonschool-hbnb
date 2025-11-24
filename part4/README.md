@@ -342,4 +342,5 @@ pip install -r requirements
 python3 run.py
 
 - Quand vous êtes sur la page, ajoutez le endpoint /index.
+<img width="1920" height="1020" alt="Page index HBNB" src="https://github.com/user-attachments/assets/dc15842d-0752-4f51-b3f5-b5aea60bb370" />
 

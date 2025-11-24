@@ -338,5 +338,8 @@ Voici ci-dessous, les différentes étapes pour lancer l'application :
 - Installez tous les outils/extensions requis avec la commande :
 pip install -r requirements
 
-- Lancez l'application en étant dans /holbertonschool-hbnb/part3 :
+- Lancez l'application en étant dans /holbertonschool-hbnb/part4 :
 python3 run.py
+
+- Quand vous êtes sur la page, ajoutez le endpoint /index.
+

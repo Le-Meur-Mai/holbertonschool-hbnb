@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter un Avis</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="images/icon.png">
+</head>
+<body>
+    <header>
+        <a href="index.html">
+            <img src="images/logo.png" alt="Logo" class="logo">
+        </a>
+        <nav>
+            <a href="login.html" id="login-link" class="login-button">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Ajouter un Avis</h1>
+        <form id="review-form" class="add-review">
+            <label for="comment">Commentaire</label>
+            <textarea id="review-text" rows="4" placeholder="Écrivez votre avis..." required></textarea>
+
+            <label for="rating">Note (1-5)</label>
+            <select id="rating" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+
+            <button type="submit" class="add-review-button">Soumettre</button>
+        </form>
+    </main>
+
+    <footer>
+        &copy; 2025 Tous droits réservés
+    </footer>
+
+    <script src="scripts.js" defer></script>
+</body>
+</html>

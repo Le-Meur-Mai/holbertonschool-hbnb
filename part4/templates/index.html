@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Places</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="images/icon.png">
+</head>
+<body>
+    <header>
+        <a href="index.html">
+            <img src="images/logo.png" alt="Logo" class="logo">
+        </a>        
+        <nav>
+            <a href="login.html" id="login-link" class="login-button">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Liste des Places</h1>
+        <select id="price-filter">
+            <option value="0">No filter</option>
+            <option value="50">Up to 50€</option>
+            <option value="100">Up to 100€</option>
+            <option value="150">Up to 150€</option>
+            <option value="200">Up to 200€</option>
+            <option value="250">Up to 250</option>
+        </select>
+        <section class="places">
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2025 Tous droits réservés
+    </footer>
+    <script src="scripts.js" defer></script>
+</body>
+</html>

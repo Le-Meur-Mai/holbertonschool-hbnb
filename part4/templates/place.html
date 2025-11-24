@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails de la Place</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="images/icon.png">
+</head>
+<body>
+    <header>
+        <a href="index.html">
+            <img src="images/logo.png" alt="Logo" class="logo">
+        </a>        
+        <nav>
+            <a href="login.html" id="login-link" class="login-button">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="place-details" class="place-details">
+            <!-- Contenu chargé dynamiquement par JavaScript -->
+        </section>
+
+        <section class="reviews">
+            <h2>Reviews</h2>
+            <div id="reviews-container">
+                <p>Aucun avis pour le moment.</p>
+            </div>
+
+            <!-- Bouton visible uniquement si authentifié -->
+            <a href="add_review.html" class="add-review-button" style="display: none;">Ajouter un avis</a>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2025 Tous droits réservés
+    </footer>
+
+    <script src="scripts.js" defer></script>
+</body>
+</html>
